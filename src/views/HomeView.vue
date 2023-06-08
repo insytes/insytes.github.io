@@ -32,13 +32,13 @@
     </div>
     <div class="row justify-content-center">
       <div class="col-4 text-center">
-        <button type="button" class="btn btn-lg btn-success" @click="startShotTimer()">Start shot</button>
+        <button type="button" class="btn btn-lg btn-success" @click="startShotTimer()">Start Shot</button>
       </div>
       <div class="col-4 text-center">
-        <button type="button" class="btn btn-lg btn-warning" @click="pauseShotTimer()">Pause shot</button>
+        <button type="button" class="btn btn-lg btn-warning" @click="pauseShotTimer()">Pause Shot</button>
       </div>
       <div class="col-4 text-center">
-        <button type="button" class="btn btn-lg btn-light" @click="resetShotTimer()">Reset shot</button>
+        <button type="button" class="btn btn-lg btn-light" @click="resetShotTimer()">Reset Shot</button>
       </div>
     </div>
   </div>
