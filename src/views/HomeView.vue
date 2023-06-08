@@ -55,8 +55,8 @@ const LIMITED_TIME = 5
 
 const GAME_DURATION = {
   hour: 0,
-  minute: 5,
-  second: 10,
+  minute: 10,
+  second: 0,
   millisecond: 0,
 }
 
