@@ -2,9 +2,9 @@
   <PWAPromptVue />
   <div class="container">
 
-    <div class="row mt-5 mb-4 justify-content-center">
+    <div class="row mt-5 mb-5 justify-content-center">
       <div class="col-10">
-        <h1 class="display-4 text-center text-light mt-3">{{ gameTimeFormatted }}</h1>
+        <h1 class="display-4 text-center text-light mt-5">{{ gameTimeFormatted }}</h1>
         <div class="progress mb-3">
           <div class="progress-bar" :class="{ 'bg-danger': (gameTimePercent <= 10), 'bg-warning': (gameTimePercent <= 20) }" role="progressbar" :style="{ width: gameTimePercent + '%'}" aria-valuemin="0" aria-valuemax="100"></div>
         </div>
@@ -32,7 +32,7 @@
 
     <div class="row justify-content-center mt-5">
       <div class="col-12">
-        <h1 class="display-2 text-center text-light text-xl mt-3 mb-2">{{ shotTimeFormatted }}</h1>
+        <h1 class="display-2 text-center text-light text-xl mt-5 mb-2">{{ shotTimeFormatted }}</h1>
         <div class="progress mb-3 mt-3">
           <div class="progress-bar" :class="{ 'bg-danger': (shotTimePercent <= 15), 'bg-warning': (shotTimePercent <= 30) }" role="progressbar" :style="{ width: shotTimePercent + '%'}" aria-valuemin="0" aria-valuemax="100"></div>
         </div>
