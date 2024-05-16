@@ -1,50 +1,58 @@
 <template>
   <PWAPromptVue />
+  <div class="progress rounded-0">
+    <div class="progress-bar rounded-0"
+      :class="{ 'bg-danger': (gameTimePercent <= 10), 'bg-warning': (gameTimePercent <= 20) }" role="progressbar"
+      :style="{ width: gameTimePercent + '%' }" aria-valuemin="0" aria-valuemax="100"></div>
+  </div>
   <div class="container">
 
-    <div class="row mt-5 mb-5 justify-content-center">
-      <div class="col-10">
-        <h1 class="display-4 text-center text-light mt-5">{{ gameTimeFormatted }}</h1>
-        <div class="progress mb-3">
-          <div class="progress-bar" :class="{ 'bg-danger': (gameTimePercent <= 10), 'bg-warning': (gameTimePercent <= 20) }" role="progressbar" :style="{ width: gameTimePercent + '%'}" aria-valuemin="0" aria-valuemax="100"></div>
+    <div class="row mb-5 justify-content-center">
+      <div class="col-12 mb-3">
+        <h1 class="display-4 text-center text-light mt-5">{{ gameClock.time.format("HH:mm:ss") }}</h1>
+      </div>
+      <div class="col-12 mt-5">
+        <h1 class="display-1 text-center text-light text-xl mt-4 mb-3">{{ shotClock.time.format('s') }}</h1>
+      </div>
+    </div>
+  </div>
+
+  <div class="fixed-bottom">
+    <div class="container p-5">
+      <div class="row text-center">
+        <div class="col-12 p-3 mt-3">
+          <button class="btn btn-light btn-lg btn-block" @click="confirmGameReset()">New Game</button>
         </div>
-        <div class="row">
-          <div class="col-6">
-            <button type="button" class="btn btn-lg btn-success" @click="
-              this.gameState == this.gameStates.PAUSED
-              ? resumeGameTimer()
-              : this.gameState == this.gameStates.PROGRESS
-              ? pauseGameTimer()
-              : startGame()">
-            {{ this.gameState == this.gameStates.PAUSED
-                ? 'Resume'
-                : this.gameState == this.gameStates.PROGRESS
-                ? 'Pause'
-                : 'Break Off' }}
+        <div class="col-12">
+          <button type="button" :class="{
+            'btn-info': gameState == gameStates.PAUSED,
+            'btn-warning': gameState == gameStates.PROGRESS,
+            'btn-danger': gameState != gameStates.PROGRESS && gameState !== gameStates.PAUSED,
+          }" class="btn btn-lg btn-block" @click="
+  this.gameState == this.gameStates.PAUSED ? resumeGameTimer()
+    : this.gameState == this.gameStates.PROGRESS ? pauseGameTimer()
+      : startGame()">
+            {{ this.gameState == this.gameStates.PAUSED ? 'Resume'
+              : this.gameState == this.gameStates.PROGRESS ? 'Pause'
+                : 'Break Off'
+            }}
           </button>
-          </div>
-          <div class="col-6 text-right">
-            <button type="button" class="btn btn-lg btn-light" @click="confirmGameReset()">Reset</button>
-          </div>
+        </div>
+
+        <div class="col-12 mt-5">
+          <button :disabled="gameState != gameStates.PROGRESS" type="button" class="btn btn-lg btn-block" :class="{
+            'btn-primary': !shotClock.isOn(),
+            'btn-success': shotClock.isOn()
+          }" @click="shotClock.isOn() ? resetShotTimer() : startShotTimer()">{{
+  shotClock.isOn() ? "Reset" : "Start Shot" }}</button>
         </div>
       </div>
     </div>
 
-    <div class="row justify-content-center mt-5">
-      <div class="col-12">
-        <h1 class="display-2 text-center text-light text-xl mt-5 mb-2">{{ shotTimeFormatted }}</h1>
-        <div class="progress mb-3 mt-3">
-          <div class="progress-bar" :class="{ 'bg-danger': (shotTimePercent <= 15), 'bg-warning': (shotTimePercent <= 30) }" role="progressbar" :style="{ width: shotTimePercent + '%'}" aria-valuemin="0" aria-valuemax="100"></div>
-        </div>
-      </div>
-    </div>
-    <div class="row justify-content-center">
-      <div class="col-6 text-center">
-        <button :disabled="gameState != gameStates.PROGRESS" type="button" class="btn btn-lg btn-success" @click="startShotTimer()">Start Shot</button>
-      </div>
-      <div class="col-6 text-center">
-        <button type="button" class="btn btn-lg btn-light" @click="resetShotTimer()">Reset Shot</button>
-      </div>
+    <div class="progress rounded-0 mt-3">
+      <div class="progress-bar rounded-0"
+        :class="{ 'bg-danger': (shotTimePercent <= 15), 'bg-warning': (shotTimePercent <= 30) }" role="progressbar"
+        :style="{ width: shotTimePercent + '%' }" aria-valuemin="0" aria-valuemax="100"></div>
     </div>
   </div>
 </template>
@@ -53,14 +61,13 @@
 import { defineComponent } from 'vue'
 import moment from 'moment'
 import PWAPromptVue from '@/components/PWAPrompt.vue'
+import { Timer } from '../lib/timer';
 
-const SECOND_TICK = 1000
-
-const LIMITED_TIME = 5
+const LIMITED_TIME = 1
 
 const GAME_DURATION = {
   hour: 0,
-  minute: 10,
+  minute: 2,
   second: 0,
   millisecond: 0,
 }
@@ -90,13 +97,11 @@ enum GAME_STATE {
 export default defineComponent({
   data() {
     return {
-      gameStates: GAME_STATE,
-      gameTime: moment().set(GAME_DURATION),
-      gameTimer: 0,
-      gameTimePercent: 100,
+      gameClock: new Timer(GAME_DURATION),
+      shotClock: new Timer(SHOT_DURATION),
       gameState: GAME_STATE.READY,
-      shotTime: moment().set(SHOT_DURATION),
-      shotTimer: 0,
+      gameStates: GAME_STATE,
+      gameTimePercent: 100,
       shotTimePercent: 100,
       beep: new Audio(),
       buzz: new Audio(),
@@ -107,14 +112,6 @@ export default defineComponent({
   components: {
     PWAPromptVue,
   },
-  computed: {
-    gameTimeFormatted(): string {
-      return moment(String(this.gameTime)).format('HH:mm:ss')
-    },
-    shotTimeFormatted(): string {
-      return moment(String(this.shotTime)).format('s')
-    },
-  },
   methods: {
     confirmGameReset() {
       if (confirm('Are you sure you want to reset the game?')) {
@@ -123,12 +120,10 @@ export default defineComponent({
         this.gameState = this.gameStates.READY
       }
     },
-    getMaxShotTime() {
-      return moment().set(
-        this.gameTime.get('minutes') < LIMITED_TIME
+    getMaxShotTime(): moment.MomentInputObject {
+      return this.gameClock.time.minutes() < LIMITED_TIME
         ? SHOT_DURATION_LIMITED
         : SHOT_DURATION
-      )
     },
     getPercentage(n: number, total: number) {
       return (n / total) * 100
@@ -137,34 +132,27 @@ export default defineComponent({
       return (momentObject.get('minutes') * 60) + momentObject.get('seconds')
     },
     pauseGameTimer() {
-      this.gameState = this.gameStates.PAUSED
-      clearInterval(this.gameTimer)
-      this.gameTimer = 0
-      this.pauseShotTimer()
+      this.gameClock.stop();
+      this.shotClock.stop();
     },
     resumeGameTimer() {
-      this.startGame();
-      if (this.shotTime.get('seconds') !== this.getMaxShotTime().get('seconds')) {
-        this.startShotTimer();
+      this.gameClock.start();
+      if (this.shotClock.time.seconds() !== moment(this.getMaxShotTime()).seconds()) {
+        this.shotClock.start();
       }
     },
-    pauseShotTimer() {
-      clearInterval(this.shotTimer)
-      this.shotTimer = 0
-    },
     resetGameTimer() {
-        this.pauseGameTimer()
+      this.pauseGameTimer();
 
-        this.gameTime = moment().set(GAME_DURATION)
-        this.gameTimePercent = 100
+      this.gameClock.reset(GAME_DURATION);
+      this.gameTimePercent = 100
 
-        this.resetShotTimer()
+      this.resetShotTimer()
     },
     resetShotTimer() {
-      this.pauseShotTimer()
-
-      this.shotTimePercent = 100
-      this.shotTime = this.getMaxShotTime()
+      this.shotTimePercent = 100;
+      this.shotClock.stop();
+      this.shotClock.reset(this.getMaxShotTime())
     },
     startGame() {
       this.beep.src = 'beep-08b.mp3'
@@ -172,74 +160,56 @@ export default defineComponent({
       this.gameOverVoice.src = 'game-over-voice.mp3'
       this.limitedShotClockVoice.src = 'limited-shot-clock-activated.mp3'
 
-      if (this.gameState === this.gameStates.PROGRESS) {
-        return;
-      }
-
-      if (this.gameState === this.gameStates.ENDED) {
-        this.resetShotTimer();
-        this.resetGameTimer();
-      }
-
-      const totalTime = moment().set(GAME_DURATION)
-
-      this.gameState = this.gameStates.PROGRESS;
-
-      this.gameTimer = setInterval(() => {
-        this.gameTime = moment(this.gameTime.subtract(1, 'seconds'))
-
+      this.gameClock.on("tick", event => {
         this.gameTimePercent = this.getPercentage(
-          this.getTotalSeconds(this.gameTime),
-          this.getTotalSeconds(totalTime)
+          this.getTotalSeconds(event.target.time),
+          this.getTotalSeconds(moment().set(GAME_DURATION))
         )
-
-        if (this.gameTime.get('minutes') == LIMITED_TIME && this.gameTime.get('seconds') == 0) {
+      });
+      this.gameClock.on("tick", event => {
+        if (event.target.time.seconds() == 0 && event.target.time.minutes() == LIMITED_TIME) {
           this.limitedShotClockVoice.play();
         }
-
-        if (this.gameTime.minutes() + this.gameTime.seconds() == 0) {
+      });
+      this.gameClock.on("ended", event => {
           this.buzz.play()
           setTimeout(() => this.gameOverVoice.play(), 1300);
           this.pauseGameTimer()
           this.gameState = this.gameStates.ENDED
-        }
-      }, SECOND_TICK)
+      });
+      this.gameClock.on("reset", event => {
+        this.gameTimePercent = this.getPercentage(
+          this.getTotalSeconds(event.target.time),
+          this.getTotalSeconds(moment().set(GAME_DURATION))
+        )
+      });
+      this.gameClock.on("started", event => {
+        this.gameState = this.gameStates.PROGRESS;
+      });
+      this.gameClock.on("stopped", event => {
+        this.gameState = this.gameStates.PAUSED;
+      });
+      this.gameClock.start();
     },
     startShotTimer() {
-      if (this.gameTimer === 0) {
-        alert('Please start the game first')
-        return
-      }
-
-      // shot clock already started
-      if (this.shotTimer != 0) {
-        return
-      }
-
-      if (this.shotTime.get('second') === 0) {
-        this.resetShotTimer()
-      }
-
-      const totalTime = this.getMaxShotTime()
-
-      this.shotTimer = setInterval(() => {
-        this.shotTime = moment(this.shotTime.subtract(1, 'second'))
-
+      this.shotClock.reset(this.getMaxShotTime());
+      this.shotClock.on("tick", event => {
         this.shotTimePercent = this.getPercentage(
-          this.shotTime.get('seconds'),
-          totalTime.get('seconds')
+          event.target.time.get('seconds'),
+          moment(this.getMaxShotTime()).seconds()
         )
-
-        if (this.shotTime.get('second') === 0) {
-          this.buzz.play()
-          this.pauseShotTimer()
-          return
-        }
-
-        if (this.shotTime.get('second') <= 5) {
+      });
+      this.shotClock.on("tick", event => {
+        if (event.target.time.seconds() <= 5) {
           this.beep.play()
         }
-      }, SECOND_TICK)
+      });
+      this.shotClock.on("ended", event => {
+          this.buzz.play()
+          this.shotClock.stop()
+          this.shotTimePercent = 0;
+      })
+      this.shotClock.start();
     },
   },
   mounted() {
