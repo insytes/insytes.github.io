@@ -9,9 +9,9 @@
 
     <div class="row mb-5 justify-content-center">
       <div class="col-12 mb-5">
-        <h1 class="display-4 text-center text-light mt-5">{{ gameClock.time.format("HH:mm:ss") }}</h1>
+        <h1 class="display-4 text-center text-light mt-5 mb-5">{{ gameClock.time.format("HH:mm:ss") }}</h1>
       </div>
-      <div class="col-12 mt-3 d-flex justify-content-center">
+      <div class="col-12 mt-5 d-flex justify-content-center">
         <circle-progress :min="0" :max="100" :value="shotTimePercent" :text="shotClock.time.format('s')" />
         <!-- <h1 class="display-1 text-center text-light text-xl mt-4 mb-3">{{ shotClock.time.format('s') }}</h1> -->
       </div>
