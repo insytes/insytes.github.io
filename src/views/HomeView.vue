@@ -66,11 +66,11 @@ import PWAPromptVue from '@/components/PWAPrompt.vue'
 import { Timer } from '../lib/timer';
 import CircleProgress from '@/components/CircleProgress.vue';
 
-const LIMITED_TIME = 1
+const LIMITED_TIME = 5
 
 const GAME_DURATION = {
   hour: 0,
-  minute: 2,
+  minute: 10,
   second: 0,
   millisecond: 0,
 }
