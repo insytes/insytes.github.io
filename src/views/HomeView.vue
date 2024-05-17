@@ -13,7 +13,7 @@
         <p class="text-light mb-4">Match Time</p>
       </div>
       <div class="col-12 d-flex justify-content-center">
-        <circle-progress @click="shotClock.isOn() ? resetShotTimer() : startShotTimer()" width="300" height="300" :value="shotTimePercent" :text="shotClock.time.format('s')" />
+        <circle-progress @click="gameState == gameStates.PROGRESS ? shotClock.isOn() ? resetShotTimer() : startShotTimer() : null" width="300" height="300" :value="shotTimePercent" :text="shotClock.time.format('s')" />
         <!-- <h1 class="display-1 text-center text-light text-xl mt-4 mb-3">{{ shotClock.time.format('s') }}</h1> -->
       </div>
     </div>
