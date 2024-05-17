@@ -3,8 +3,8 @@ body {
 }
 
 .progress-ring {
-  width: 180px;
-  height: 180px;
+  /* width: 180px; */
+  /* height: 180px; */
 }
 
 .progress-ring-circle {
@@ -14,8 +14,9 @@ body {
 }
 
 .progress-ring-ring {
-  stroke: #007fff;
+  /* stroke: #007fff; */
   stroke-width: 4;
+  stroke-linecap: round;
   fill: none;
 }
 

@@ -1,9 +1,9 @@
 <template>
 <svg class="progress-ring" viewBox="-50,-50,100,100">
   <!-- <circle class="progress-ring-circle" r="46"/> -->
-  <path class="progress-ring-ring" :d="path"/>
+  <path class="progress-ring-ring" :d="path" :stroke="stroke" :fill="fill" />
   <!-- <circle class="progress-ring-end" :cx="endX" :cy="endY" r="4"/> -->
-  <text y="5" alignment-baseline="middle" text-anchor="middle" fill="white" stroke="blue" font-size="65">{{ text }}</text>
+  <text y="5" alignment-baseline="middle" text-anchor="middle" :fill="textFill" :stroke="textStroke" font-size="44">{{ text }}</text>
 </svg>
 </template>
 
@@ -22,12 +22,28 @@ export default defineComponent({
     },
     max: {
       type: Number,
-      default: 1,
+      default: 100,
     },
     text: {
       type: null,
       default: '',
     },
+    stroke: {
+      type: String,
+      default: "#FF9500"
+    },
+    fill: {
+      type: String,
+      default: "#FF9500"
+    },
+    textFill: {
+      type: String,
+      default: "white"
+    },
+    textStroke: {
+      type: String,
+      default: "white"
+    }
   },
   computed: {
     theta() {

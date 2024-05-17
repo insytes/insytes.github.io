@@ -1,6 +1,6 @@
 <template>
   <PWAPromptVue />
-  <div class="progress rounded-0">
+  <div class="progress rounded-0 d-none">
     <div class="progress-bar rounded-0"
       :class="{ 'bg-danger': (gameTimePercent <= 10), 'bg-warning': (gameTimePercent <= 20) }" role="progressbar"
       :style="{ width: gameTimePercent + '%' }" aria-valuemin="0" aria-valuemax="100"></div>
@@ -8,11 +8,12 @@
   <div class="container">
 
     <div class="row mb-5 justify-content-center">
-      <div class="col-12 mb-5">
-        <h1 class="display-4 text-center text-light mt-5 mb-5">{{ gameClock.time.format("HH:mm:ss") }}</h1>
+      <div class="col-12 mb-5 text-center">
+        <h1 class="display-4 text-light mt-5">{{ gameClock.time.format("mm:ss") }}</h1>
+        <p class="text-light mb-4">Match Time</p>
       </div>
-      <div class="col-12 mt-5 d-flex justify-content-center">
-        <circle-progress :min="0" :max="100" :value="shotTimePercent" :text="shotClock.time.format('s')" />
+      <div class="col-12 d-flex justify-content-center">
+        <circle-progress width="300" height="300" :value="shotTimePercent" :text="shotClock.time.format('s')" />
         <!-- <h1 class="display-1 text-center text-light text-xl mt-4 mb-3">{{ shotClock.time.format('s') }}</h1> -->
       </div>
     </div>
@@ -65,11 +66,11 @@ import PWAPromptVue from '@/components/PWAPrompt.vue'
 import { Timer } from '../lib/timer';
 import CircleProgress from '@/components/CircleProgress.vue';
 
-const LIMITED_TIME = 5
+const LIMITED_TIME = 1
 
 const GAME_DURATION = {
   hour: 0,
-  minute: 10,
+  minute: 2,
   second: 0,
   millisecond: 0,
 }
@@ -104,7 +105,8 @@ export default defineComponent({
       gameState: GAME_STATE.READY,
       gameStates: GAME_STATE,
       gameTimePercent: 100,
-      shotTimePercent: 99.9,
+      shotTimePercent: 99.999,
+      shotPercentInterval: 0,
       beep: new Audio(),
       buzz: new Audio(),
       gameOverVoice: new Audio(),
@@ -153,6 +155,7 @@ export default defineComponent({
       this.resetShotTimer()
     },
     resetShotTimer() {
+      clearInterval(this.shotPercentInterval);
       this.shotTimePercent = 99.9;
       this.shotClock.stop();
       this.shotClock.reset(this.getMaxShotTime())
@@ -195,12 +198,27 @@ export default defineComponent({
       this.gameClock.start();
     },
     startShotTimer() {
+      this.shotTimePercent = 99.999
       this.shotClock.reset(this.getMaxShotTime());
       this.shotClock.on("tick", event => {
         this.shotTimePercent = this.getPercentage(
+          event.target.time.get('seconds') + 1,
+          moment(this.getMaxShotTime()).seconds()
+        );
+        clearInterval(this.shotPercentInterval);
+        let currentPercent = this.shotTimePercent;
+        const newPercent = this.getPercentage(
           event.target.time.get('seconds'),
           moment(this.getMaxShotTime()).seconds()
-        )
+        );
+        this.shotPercentInterval = setInterval(() => {
+          currentPercent = currentPercent - 0.07;
+          if (currentPercent < newPercent) {
+            clearInterval(this.shotPercentInterval);
+            return;
+          }
+          this.shotTimePercent = currentPercent;
+        }, 10);
       });
       this.shotClock.on("tick", event => {
         if (event.target.time.seconds() <= 5) {
@@ -208,6 +226,7 @@ export default defineComponent({
         }
       });
       this.shotClock.on("ended", event => {
+        clearInterval(this.shotPercentInterval)
           this.buzz.play()
           this.shotClock.stop()
           this.shotTimePercent = 99.9;
