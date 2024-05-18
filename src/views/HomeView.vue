@@ -5,57 +5,39 @@
       :class="{ 'bg-danger': (gameTimePercent <= 10), 'bg-warning': (gameTimePercent <= 20) }" role="progressbar"
       :style="{ width: gameTimePercent + '%' }" aria-valuemin="0" aria-valuemax="100"></div>
   </div>
-  <div class="container">
-
-    <div class="row mb-5 justify-content-center">
-      <div class="col-12 mb-5 text-center">
+  <div class="container h-100">
+    <div class="row h-100">
+      <div class="col-12 text-center align-items-start">
         <h1 class="display-4 text-light mt-5">{{ gameClock.time.format("mm:ss") }}</h1>
-        <p class="text-light mb-4">Match Time</p>
+        <p class="text-light">Match Time</p>
       </div>
-      <div class="col-12 d-flex justify-content-center">
-        <circle-progress @click="gameState == gameStates.PROGRESS ? shotClock.isOn() ? resetShotTimer() : startShotTimer() : null" width="300" height="300" :value="shotTimePercent" :text="shotClock.time.format('s')" />
-        <!-- <h1 class="display-1 text-center text-light text-xl mt-4 mb-3">{{ shotClock.time.format('s') }}</h1> -->
+      <div class="col-12 d-flex justify-content-center align-items-center" ref="countdownContainer">
+        <circle-progress
+          @click="gameState == gameStates.PROGRESS ? shotClock.isOn() ? resetShotTimer() : startShotTimer() : null"
+          :width="timerHeight" :height="timerHeight" :value="shotTimePercent" :text="shotClock.time.format('s')" />
       </div>
-    </div>
-  </div>
-
-  <div class="fixed-bottom">
-    <div class="container p-5">
-      <div class="row text-center">
-        <div class="col-12 p-3 mt-3">
-          <button class="btn btn-light btn-lg btn-block" @click="confirmGameReset()">New Game</button>
-        </div>
-        <div class="col-12">
-          <button type="button" :class="{
-            'btn-info': gameState == gameStates.PAUSED,
-            'btn-warning': gameState == gameStates.PROGRESS,
-            'btn-danger': gameState != gameStates.PROGRESS && gameState !== gameStates.PAUSED,
-          }" class="btn btn-lg btn-block" @click="
+      <div class="col-12 px-5 py-2 mt-3 align-items-end">
+        <button class="btn btn-light btn-lg btn-block" @click="confirmGameReset()">New Game</button>
+        <button type="button" :class="{
+          'btn-info': gameState == gameStates.PAUSED,
+          'btn-warning': gameState == gameStates.PROGRESS,
+          'btn-danger': gameState != gameStates.PROGRESS && gameState !== gameStates.PAUSED,
+        }" class="btn btn-lg btn-block mt-3" @click="
   this.gameState == this.gameStates.PAUSED ? resumeGameTimer()
     : this.gameState == this.gameStates.PROGRESS ? pauseGameTimer()
       : startGame()">
-            {{ this.gameState == this.gameStates.PAUSED ? 'Resume'
-              : this.gameState == this.gameStates.PROGRESS ? 'Pause'
-                : 'Break Off'
-            }}
-          </button>
-        </div>
-
-        <div class="col-12 mt-5">
-          <button :disabled="gameState != gameStates.PROGRESS" type="button" class="btn btn-lg btn-block" :class="{
-            'btn-primary': !shotClock.isOn(),
-            'btn-success': shotClock.isOn()
-          }" @click="shotClock.isOn() ? resetShotTimer() : startShotTimer()">{{
+          {{ this.gameState == this.gameStates.PAUSED ? 'Resume'
+            : this.gameState == this.gameStates.PROGRESS ? 'Pause'
+              : 'Break Off'
+          }}
+        </button>
+        <button :disabled="gameState != gameStates.PROGRESS" type="button" class="btn btn-lg btn-block mt-5" :class="{
+          'btn-primary': !shotClock.isOn(),
+          'btn-success': shotClock.isOn()
+        }" @click="shotClock.isOn() ? resetShotTimer() : startShotTimer()">{{
   shotClock.isOn() ? "Reset" : "Start Shot" }}</button>
-        </div>
       </div>
     </div>
-
-    <!-- <div class="progress rounded-0 mt-3">
-      <div class="progress-bar rounded-0"
-        :class="{ 'bg-danger': (shotTimePercent <= 15), 'bg-warning': (shotTimePercent <= 30) }" role="progressbar"
-        :style="{ width: shotTimePercent + '%' }" aria-valuemin="0" aria-valuemax="100"></div>
-    </div> -->
   </div>
 </template>
 
@@ -107,6 +89,7 @@ export default defineComponent({
       gameTimePercent: 100,
       shotTimePercent: 99.999,
       shotPercentInterval: 0,
+      timerHeight: 0,
       beep: new Audio(),
       buzz: new Audio(),
       gameOverVoice: new Audio(),
@@ -178,10 +161,10 @@ export default defineComponent({
         }
       });
       this.gameClock.on("ended", event => {
-          this.buzz.play()
-          setTimeout(() => this.gameOverVoice.play(), 1300);
-          this.pauseGameTimer()
-          this.gameState = this.gameStates.ENDED
+        this.buzz.play()
+        setTimeout(() => this.gameOverVoice.play(), 1300);
+        this.pauseGameTimer()
+        this.gameState = this.gameStates.ENDED
       });
       this.gameClock.on("reset", event => {
         this.gameTimePercent = this.getPercentage(
@@ -227,9 +210,9 @@ export default defineComponent({
       });
       this.shotClock.on("ended", event => {
         clearInterval(this.shotPercentInterval)
-          this.buzz.play()
-          this.shotClock.stop()
-          this.shotTimePercent = 99.9;
+        this.buzz.play()
+        this.shotClock.stop()
+        this.shotTimePercent = 99.9;
       })
       this.shotClock.start();
     },
@@ -239,6 +222,10 @@ export default defineComponent({
     this.buzz.muted = false
     this.gameOverVoice.muted = false
     this.limitedShotClockVoice.muted = false
+
+    this.$nextTick(() => {
+      this.timerHeight = (this.$refs['countdownContainer'] as any).clientHeight * 2;
+    })
   }
 })
 </script>
