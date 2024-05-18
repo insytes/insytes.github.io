@@ -89,7 +89,7 @@ export default defineComponent({
       gameTimePercent: 100,
       shotTimePercent: 99.999,
       shotPercentInterval: 0,
-      timerHeight: 0,
+      timerHeight: 280,
       beep: new Audio(),
       buzz: new Audio(),
       gameOverVoice: new Audio(),
@@ -224,7 +224,8 @@ export default defineComponent({
     this.limitedShotClockVoice.muted = false
 
     this.$nextTick(() => {
-      this.timerHeight = (this.$refs['countdownContainer'] as any).clientHeight * 2;
+      // console.log((this.$refs['countdownContainer'] as any).clientHeight)
+      // this.timerHeight = (this.$refs['countdownContainer'] as any).clientHeight * 2;
     })
   }
 })
