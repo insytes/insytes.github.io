@@ -195,13 +195,13 @@ export default defineComponent({
           moment(this.getMaxShotTime()).seconds()
         );
         this.shotPercentInterval = setInterval(() => {
-          currentPercent = currentPercent - 0.07;
+          currentPercent = currentPercent - 0.2;
           if (currentPercent < newPercent) {
             clearInterval(this.shotPercentInterval);
             return;
           }
           this.shotTimePercent = currentPercent;
-        }, 10);
+        }, 20);
       });
       this.shotClock.on("tick", event => {
         if (event.target.time.seconds() <= 5) {
