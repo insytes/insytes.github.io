@@ -4,5 +4,10 @@ import './registerServiceWorker'
 import router from './router'
 
 import './main.css';
+// import * as $api from './lib/api';
 
-createApp(App).use(router).mount('#app')
+
+const app = createApp(App)
+// app.config.globalProperties.$api = $api;
+app.use(router).mount('#app')
+
