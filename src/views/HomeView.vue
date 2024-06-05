@@ -80,6 +80,16 @@ enum GAME_STATE {
   ENDED
 }
 
+const sounds = {
+  beep: new Audio('beep-08b.mp3'),
+  buzz: new Audio('buzzer.mp3'),
+  gameOverVoice: new Audio('game-over-voice.mp3'),
+  limitedShotClockVoice: new Audio('limited-shot-clock-activated.mp3'),
+  oneMinuteLeftVoice: new Audio('one-minute-left.mp3'),
+} satisfies Record<string, HTMLAudioElement>
+
+type Sound = keyof typeof sounds;
+
 export default defineComponent({
   data() {
     return {
@@ -88,11 +98,6 @@ export default defineComponent({
       gameState: GAME_STATE.READY,
       gameStates: GAME_STATE,
       gameTimePercent: 100,
-      beep: new Audio('beep-08b.mp3'),
-      buzz: new Audio('buzzer.mp3'),
-      gameOverVoice: new Audio('game-over-voice.mp3'),
-      limitedShotClockVoice: new Audio('limited-shot-clock-activated.mp3'),
-      oneMinuteLeftVoice: new Audio('one-minute-left.mp3'),
     }
   },
   components: {
@@ -101,7 +106,7 @@ export default defineComponent({
   },
   methods: {
     startGame() {
-      this.gameClock.on("ended", () => this.buzz.play());
+      this.gameClock.on("ended", () => this.playSound('buzz'));
       this.gameClock.on("ended", this.resetGameTimer);
       this.gameClock.on("ended", () => this.gameState = this.gameStates.ENDED);
       this.gameClock.on("started", () => this.gameState = this.gameStates.PROGRESS);
@@ -109,13 +114,13 @@ export default defineComponent({
       this.gameClock.on("tick", () => this.gameTimePercent = this.gameClock.percent)
       this.gameClock.on("tick", this.couldMakeShotClockVoice);
       this.gameClock.on("tick", this.couldMakeFinalMinuteVoice);
-      this.gameClock.on("ended", () => setTimeout(() => this.gameOverVoice.play(), 1300));
+      this.gameClock.on("ended", () => setTimeout(() => this.playSound('gameOverVoice'), 1300));
       this.gameClock.start();
     },
     startShotTimer() {
       this.shotClock.reset(this.getMaxShotTime());
       this.shotClock.on("tick", this.couldMakeBeepSound);
-      this.shotClock.on("ended", () => this.buzz.play());
+      this.shotClock.on("ended", () => this.playSound('buzz'));
       this.shotClock.on("ended", this.shotClock.stop.bind(this));
       this.shotClock.start();
     },
@@ -152,26 +157,26 @@ export default defineComponent({
     },
     couldMakeFinalMinuteVoice(event: IEvent<Timer, TimerEventData>) {
       if (event.target.time.seconds() == 0 && event.target.time.minute() == 1) {
-        this.oneMinuteLeftVoice.play();
+        this.playSound('oneMinuteLeftVoice');
       }
     },
     couldMakeShotClockVoice(event: IEvent<Timer, TimerEventData>) {
       if (event.target.time.seconds() == 0 && event.target.time.minutes() == LIMITED_TIME) {
-        this.limitedShotClockVoice.play();
+        this.playSound('limitedShotClockVoice');
       }
     },
     couldMakeBeepSound(event:IEvent<Timer, TimerEventData> ) {
       if (event.target.time.seconds() <= 5) {
-        this.beep.play()
+        this.playSound('beep');
       }
     },
+    playSound(sound: Sound) {
+      sounds[sound].play();
+    }
   },
   mounted() {
-    this.beep.muted = false
-    this.buzz.muted = false
-    this.gameOverVoice.muted = false
-    this.limitedShotClockVoice.muted = false
-    this.oneMinuteLeftVoice.muted = false
+    console.log('1234')
+    Object.keys(sounds).forEach(sound => sounds[sound as Sound].muted = false)
   }
 })
 </script>
