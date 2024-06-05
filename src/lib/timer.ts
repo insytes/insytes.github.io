@@ -9,7 +9,7 @@ interface ITimer {
   // time(): moment.Moment;
 }
 
-type TimerEventData = {
+export type TimerEventData = {
   time: moment.Moment
 }
 

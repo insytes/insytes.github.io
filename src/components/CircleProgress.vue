@@ -18,7 +18,6 @@
 <script>
 import { defineComponent } from 'vue'
 
-// const FULL_DASH_ARRAY = 283;
 const FULL_DASH_ARRAY = 282;
 
 export default defineComponent({
@@ -38,6 +37,7 @@ export default defineComponent({
   },
   computed: {
     strokeDasharray() {
+      console.log(this.max);
       const rawTimeFraction = this.value / this.max;
       const timeFraction = rawTimeFraction - (1 / this.max) * (1 - rawTimeFraction);
       return `${(timeFraction * FULL_DASH_ARRAY).toFixed(0)} ${FULL_DASH_ARRAY}`;
