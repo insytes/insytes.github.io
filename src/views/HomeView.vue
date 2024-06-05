@@ -14,7 +14,7 @@
       <div class="col-12 d-flex justify-content-center align-items-center" ref="countdownContainer">
         <circle-progress
           @click="gameState == gameStates.PROGRESS ? shotClock.isOn() ? resetShotTimer() : startShotTimer() : null"
-          :max="shotClock.units.second" :value="shotClock.time.seconds()" :text="shotClock.time.format('s')" />
+          :max="getMaxShotTime().second" :value="shotClock.time.seconds()" :text="shotClock.time.format('s')" />
       </div>
       <div class="col-12 px-5 py-2 mt-3 align-items-end">
         <button class="btn btn-light btn-lg btn-block" @click="confirmGameReset()">New Game</button>
@@ -45,8 +45,9 @@
 import { defineComponent } from 'vue'
 import moment from 'moment'
 import PWAPromptVue from '@/components/PWAPrompt.vue'
-import { Timer } from '../lib/timer';
+import { Timer, TimerEventData } from '@/lib/timer';
 import CircleProgress from '@/components/CircleProgress.vue';
+import { IEvent } from '@/lib/events';
 
 const LIMITED_TIME = 5
 
@@ -87,10 +88,11 @@ export default defineComponent({
       gameState: GAME_STATE.READY,
       gameStates: GAME_STATE,
       gameTimePercent: 100,
-      beep: new Audio(),
-      buzz: new Audio(),
-      gameOverVoice: new Audio(),
-      limitedShotClockVoice: new Audio(),
+      beep: new Audio('beep-08b.mp3'),
+      buzz: new Audio('buzzer.mp3'),
+      gameOverVoice: new Audio('game-over-voice.mp3'),
+      limitedShotClockVoice: new Audio('limited-shot-clock-activated.mp3'),
+      oneMinuteLeftVoice: new Audio('one-minute-left.mp3'),
     }
   },
   components: {
@@ -98,6 +100,25 @@ export default defineComponent({
     CircleProgress,
   },
   methods: {
+    startGame() {
+      this.gameClock.on("ended", () => this.buzz.play());
+      this.gameClock.on("ended", this.resetGameTimer);
+      this.gameClock.on("ended", () => this.gameState = this.gameStates.ENDED);
+      this.gameClock.on("started", () => this.gameState = this.gameStates.PROGRESS);
+      this.gameClock.on("stopped", () => this.gameState = this.gameStates.PAUSED);
+      this.gameClock.on("tick", () => this.gameTimePercent = this.gameClock.percent)
+      this.gameClock.on("tick", this.couldMakeShotClockVoice);
+      this.gameClock.on("tick", this.couldMakeFinalMinuteVoice);
+      this.gameClock.on("ended", () => setTimeout(() => this.gameOverVoice.play(), 1300));
+      this.gameClock.start();
+    },
+    startShotTimer() {
+      this.shotClock.reset(this.getMaxShotTime());
+      this.shotClock.on("tick", this.couldMakeBeepSound);
+      this.shotClock.on("ended", () => this.buzz.play());
+      this.shotClock.on("ended", this.shotClock.stop.bind(this));
+      this.shotClock.start();
+    },
     confirmGameReset() {
       if (confirm('Are you sure you want to reset the game?')) {
         this.resetShotTimer()
@@ -109,12 +130,6 @@ export default defineComponent({
       return this.gameClock.time.minutes() < LIMITED_TIME
         ? SHOT_DURATION_LIMITED
         : SHOT_DURATION
-    },
-    getPercentage(n: number, total: number) {
-      return (n / total) * 100
-    },
-    getTotalSeconds(momentObject: moment.Moment) {
-      return (momentObject.get('minutes') * 60) + momentObject.get('seconds')
     },
     pauseGameTimer() {
       this.gameClock.stop();
@@ -135,49 +150,20 @@ export default defineComponent({
       this.shotClock.stop();
       this.shotClock.reset(this.getMaxShotTime())
     },
-    startGame() {
-      this.beep.src = 'beep-08b.mp3'
-      this.buzz.src = 'buzzer.mp3'
-      this.gameOverVoice.src = 'game-over-voice.mp3'
-      this.limitedShotClockVoice.src = 'limited-shot-clock-activated.mp3'
-
-      this.gameClock.on("tick", event => {
-        this.gameTimePercent = this.getPercentage(
-          this.getTotalSeconds(event.target.time),
-          this.getTotalSeconds(moment().set(GAME_DURATION))
-        )
-      });
-      this.gameClock.on("tick", event => {
-        if (event.target.time.seconds() == 0 && event.target.time.minutes() == LIMITED_TIME) {
-          this.limitedShotClockVoice.play();
-        }
-      });
-      this.gameClock.on("ended", event => {
-        this.buzz.play()
-        setTimeout(() => this.gameOverVoice.play(), 1300);
-        this.pauseGameTimer()
-        this.gameState = this.gameStates.ENDED
-      });
-      this.gameClock.on("started", event => {
-        this.gameState = this.gameStates.PROGRESS;
-      });
-      this.gameClock.on("stopped", event => {
-        this.gameState = this.gameStates.PAUSED;
-      });
-      this.gameClock.start();
+    couldMakeFinalMinuteVoice(event: IEvent<Timer, TimerEventData>) {
+      if (event.target.time.seconds() == 0 && event.target.time.minute() == 1) {
+        this.oneMinuteLeftVoice.play();
+      }
     },
-    startShotTimer() {
-      this.shotClock.reset(this.getMaxShotTime());
-      this.shotClock.on("tick", event => {
-        if (event.target.time.seconds() <= 5) {
-          this.beep.play()
-        }
-      });
-      this.shotClock.on("ended", event => {
-        this.buzz.play()
-        this.shotClock.stop()
-      })
-      this.shotClock.start();
+    couldMakeShotClockVoice(event: IEvent<Timer, TimerEventData>) {
+      if (event.target.time.seconds() == 0 && event.target.time.minutes() == LIMITED_TIME) {
+        this.limitedShotClockVoice.play();
+      }
+    },
+    couldMakeBeepSound(event:IEvent<Timer, TimerEventData> ) {
+      if (event.target.time.seconds() <= 5) {
+        this.beep.play()
+      }
     },
   },
   mounted() {
@@ -185,6 +171,7 @@ export default defineComponent({
     this.buzz.muted = false
     this.gameOverVoice.muted = false
     this.limitedShotClockVoice.muted = false
+    this.oneMinuteLeftVoice.muted = false
   }
 })
 </script>

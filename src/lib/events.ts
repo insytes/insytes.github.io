@@ -1,4 +1,4 @@
-interface IEvent<Target, EventData> {
+export interface IEvent<Target, EventData> {
   target: Target;
   type: string;
   data?: EventData;
