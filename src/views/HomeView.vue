@@ -14,7 +14,7 @@
       <div class="col-12 d-flex justify-content-center align-items-center" ref="countdownContainer">
         <circle-progress
           @click="gameState == gameStates.PROGRESS ? shotClock.isOn() ? resetShotTimer() : startShotTimer() : null"
-          :width="timerHeight" :height="timerHeight" :value="shotTimePercent" :text="shotClock.time.format('s')" />
+          :max="shotClock.units.second" :value="shotClock.time.seconds()" :text="shotClock.time.format('s')" />
       </div>
       <div class="col-12 px-5 py-2 mt-3 align-items-end">
         <button class="btn btn-light btn-lg btn-block" @click="confirmGameReset()">New Game</button>
@@ -87,9 +87,6 @@ export default defineComponent({
       gameState: GAME_STATE.READY,
       gameStates: GAME_STATE,
       gameTimePercent: 100,
-      shotTimePercent: 99.999,
-      shotPercentInterval: 0,
-      timerHeight: 280,
       beep: new Audio(),
       buzz: new Audio(),
       gameOverVoice: new Audio(),
@@ -131,15 +128,10 @@ export default defineComponent({
     },
     resetGameTimer() {
       this.pauseGameTimer();
-
       this.gameClock.reset(GAME_DURATION);
-      this.gameTimePercent = 99.9
-
       this.resetShotTimer()
     },
     resetShotTimer() {
-      clearInterval(this.shotPercentInterval);
-      this.shotTimePercent = 99.9;
       this.shotClock.stop();
       this.shotClock.reset(this.getMaxShotTime())
     },
@@ -166,12 +158,6 @@ export default defineComponent({
         this.pauseGameTimer()
         this.gameState = this.gameStates.ENDED
       });
-      this.gameClock.on("reset", event => {
-        this.gameTimePercent = this.getPercentage(
-          this.getTotalSeconds(event.target.time),
-          this.getTotalSeconds(moment().set(GAME_DURATION))
-        )
-      });
       this.gameClock.on("started", event => {
         this.gameState = this.gameStates.PROGRESS;
       });
@@ -181,38 +167,15 @@ export default defineComponent({
       this.gameClock.start();
     },
     startShotTimer() {
-      this.shotTimePercent = 99.999
       this.shotClock.reset(this.getMaxShotTime());
-      this.shotClock.on("tick", event => {
-        this.shotTimePercent = this.getPercentage(
-          event.target.time.get('seconds') + 1,
-          moment(this.getMaxShotTime()).seconds()
-        );
-        clearInterval(this.shotPercentInterval);
-        let currentPercent = this.shotTimePercent;
-        const newPercent = this.getPercentage(
-          event.target.time.get('seconds'),
-          moment(this.getMaxShotTime()).seconds()
-        );
-        this.shotPercentInterval = setInterval(() => {
-          currentPercent = currentPercent - 0.2;
-          if (currentPercent < newPercent) {
-            clearInterval(this.shotPercentInterval);
-            return;
-          }
-          this.shotTimePercent = currentPercent;
-        }, 20);
-      });
       this.shotClock.on("tick", event => {
         if (event.target.time.seconds() <= 5) {
           this.beep.play()
         }
       });
       this.shotClock.on("ended", event => {
-        clearInterval(this.shotPercentInterval)
         this.buzz.play()
         this.shotClock.stop()
-        this.shotTimePercent = 99.9;
       })
       this.shotClock.start();
     },
@@ -222,11 +185,6 @@ export default defineComponent({
     this.buzz.muted = false
     this.gameOverVoice.muted = false
     this.limitedShotClockVoice.muted = false
-
-    this.$nextTick(() => {
-      // console.log((this.$refs['countdownContainer'] as any).clientHeight)
-      // this.timerHeight = (this.$refs['countdownContainer'] as any).clientHeight * 2;
-    })
   }
 })
 </script>
