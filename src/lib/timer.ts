@@ -19,7 +19,7 @@ export class Timer extends EventEmitter<Timer, TimerEvent, TimerEventData> imple
   private tick = 0;
   private moment: moment.Moment;
 
-  constructor(private units: moment.MomentInputObject) {
+  constructor(public units: moment.MomentInputObject) {
     super();
     this.moment = moment(units);
   }
@@ -51,6 +51,16 @@ export class Timer extends EventEmitter<Timer, TimerEvent, TimerEventData> imple
 
   get time() {
     return this.moment.clone();
+  }
+
+  get ms() {
+    return moment.duration(this.time.format("HH:mm:ss")).asMilliseconds();
+  }
+
+  get percent() {
+    const totalTime = moment.duration(this.units).asSeconds();
+    const currentTime = moment.duration(this.time.format('HH:mm:ss')).asSeconds();
+    return (currentTime / totalTime) * 100 - 0.0001;
   }
 
   private getEventData(): TimerEventData {
