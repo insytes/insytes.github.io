@@ -1,5 +1,9 @@
 {
   "projects": {
-    "default": "snooker-81fb3"
-  }
+    "default": "snooker-shootout",
+    "prod": "snooker-shootout"
+  },
+  "targets": {},
+  "etags": {},
+  "dataconnectEmulatorConfig": {}
 }
