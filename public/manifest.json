@@ -1,7 +1,7 @@
 {
     "name": "Snooker Shootout Timer",
     "short_name": "Shootout",
-    "start_url": "/dist/index.html",
+    "start_url": "/index.html",
     "display": "standalone",
     "icons": [
       {
