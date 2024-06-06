@@ -1,5 +1,13 @@
 <template>
   <PWAPromptVue />
+  <div class="fixed-top text-right p-3">
+    <router-link to="settings">
+      <svg width="56" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none">
+        <path stroke="#eee" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 21h-4l-.551-2.48a6.991 6.991 0 0 1-1.819-1.05l-2.424.763-2-3.464 1.872-1.718a7.055 7.055 0 0 1 0-2.1L3.206 9.232l2-3.464 2.424.763A6.992 6.992 0 0 1 9.45 5.48L10 3h4l.551 2.48a6.992 6.992 0 0 1 1.819 1.05l2.424-.763 2 3.464-1.872 1.718a7.05 7.05 0 0 1 0 2.1l1.872 1.718-2 3.464-2.424-.763a6.99 6.99 0 0 1-1.819 1.052L14 21z"/>
+        <circle cx="12" cy="12" r="3" stroke="#eee" stroke-width="2"/>
+      </svg>
+    </router-link>
+  </div>
   <div class="progress rounded-0 d-none">
     <div class="progress-bar rounded-0"
       :class="{ 'bg-danger': (gameTimePercent <= 10), 'bg-warning': (gameTimePercent <= 20) }" role="progressbar"
@@ -48,29 +56,30 @@ import PWAPromptVue from '@/components/PWAPrompt.vue'
 import { Timer, TimerEventData } from '@/lib/timer';
 import CircleProgress from '@/components/CircleProgress.vue';
 import { IEvent } from '@/lib/events';
+import Settings from '@/lib/settings';
 
-const LIMITED_TIME = 5
+// const LIMITED_TIME = 5
 
-const GAME_DURATION = {
-  hour: 0,
-  minute: 10,
-  second: 0,
-  millisecond: 0,
-}
+// const GAME_DURATION = {
+//   hour: 0,
+//   minute: 10,
+//   second: 0,
+//   millisecond: 0,
+// }
 
-const SHOT_DURATION = {
-  hour: 0,
-  minute: 0,
-  second: 15,
-  millisecond: 0,
-}
+// const SHOT_DURATION = {
+//   hour: 0,
+//   minute: 0,
+//   second: 15,
+//   millisecond: 0,
+// }
 
-const SHOT_DURATION_LIMITED = {
-  hour: 0,
-  minute: 0,
-  second: 10,
-  millisecond: 0,
-}
+// const SHOT_DURATION_LIMITED = {
+//   hour: 0,
+//   minute: 0,
+//   second: 10,
+//   millisecond: 0,
+// }
 
 enum GAME_STATE {
   READY,
@@ -93,8 +102,9 @@ type Sound = keyof typeof sounds;
 export default defineComponent({
   data() {
     return {
-      gameClock: new Timer(GAME_DURATION),
-      shotClock: new Timer(SHOT_DURATION),
+      settings: Settings.settings,
+      gameClock: new Timer(Settings.settings.gameDuration),
+      shotClock: new Timer(Settings.settings.shotDuration),
       gameState: GAME_STATE.READY,
       gameStates: GAME_STATE,
       gameTimePercent: 100,
@@ -132,9 +142,9 @@ export default defineComponent({
       }
     },
     getMaxShotTime(): moment.MomentInputObject {
-      return this.gameClock.time.minutes() < LIMITED_TIME
-        ? SHOT_DURATION_LIMITED
-        : SHOT_DURATION
+      return this.gameClock.time.minutes() < this.settings.limitedTime
+        ? this.settings.shotDurationLimited
+        : this.settings.shotDuration
     },
     pauseGameTimer() {
       this.gameClock.stop();
@@ -148,7 +158,7 @@ export default defineComponent({
     },
     resetGameTimer() {
       this.pauseGameTimer();
-      this.gameClock.reset(GAME_DURATION);
+      this.gameClock.reset(this.settings.gameDuration);
       this.resetShotTimer()
     },
     resetShotTimer() {
@@ -161,7 +171,7 @@ export default defineComponent({
       }
     },
     couldMakeShotClockVoice(event: IEvent<Timer, TimerEventData>) {
-      if (event.target.time.seconds() == 0 && event.target.time.minutes() == LIMITED_TIME) {
+      if (event.target.time.seconds() == 0 && event.target.time.minutes() == this.settings.limitedTime) {
         this.playSound('limitedShotClockVoice');
       }
     },
