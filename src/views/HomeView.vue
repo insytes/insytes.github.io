@@ -58,29 +58,6 @@ import CircleProgress from '@/components/CircleProgress.vue';
 import { IEvent } from '@/lib/events';
 import Settings from '@/lib/settings';
 
-// const LIMITED_TIME = 5
-
-// const GAME_DURATION = {
-//   hour: 0,
-//   minute: 10,
-//   second: 0,
-//   millisecond: 0,
-// }
-
-// const SHOT_DURATION = {
-//   hour: 0,
-//   minute: 0,
-//   second: 15,
-//   millisecond: 0,
-// }
-
-// const SHOT_DURATION_LIMITED = {
-//   hour: 0,
-//   minute: 0,
-//   second: 10,
-//   millisecond: 0,
-// }
-
 enum GAME_STATE {
   READY,
   PROGRESS,
@@ -116,7 +93,7 @@ export default defineComponent({
   },
   methods: {
     startGame() {
-      this.gameClock.on("ended", () => this.playSound('buzz'));
+      this.gameClock.on("ended", () => this.playSound('buzz', { endGame: true }));
       this.gameClock.on("ended", this.resetGameTimer);
       this.gameClock.on("ended", () => this.gameState = this.gameStates.ENDED);
       this.gameClock.on("started", () => this.gameState = this.gameStates.PROGRESS);
@@ -180,8 +157,18 @@ export default defineComponent({
         this.playSound('beep');
       }
     },
-    playSound(sound: Sound) {
-      sounds[sound].play();
+    playSound(sound: Sound, { endGame = false } = {}) {
+      const soundsMap: Record<Sound, boolean> = {
+        'beep': this.settings.sounds.playBeep,
+        'buzz': endGame ? this.settings.sounds.playGameOverBuzzer : this.settings.sounds.playShotClockBuzzer,
+        'gameOverVoice': this.settings.sounds.playGameOverVoice,
+        'limitedShotClockVoice': this.settings.sounds.playLimitedShotClockVoice,
+        'oneMinuteLeftVoice': this.settings.sounds.playFinalMinuteVoice,
+      }
+
+      if (soundsMap[sound]) {
+        sounds[sound].play();
+      }
     }
   },
   mounted() {

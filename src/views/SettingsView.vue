@@ -8,12 +8,12 @@
         
         <h3>Game Clock</h3>
 
-        <div class="form-group row">
+        <!-- <div class="form-group row">
           <label for="gameClockHour" class="col-6 col-form-label">Hours</label>
           <div class="col-6">
             <input type="number" class="form-control" id="gameClockHour" v-model="settings.gameDuration.hour">
           </div>
-        </div>
+        </div> -->
 
         <div class="form-group row">
           <label for="gameClockMinutes" class="col-6 col-form-label">Minutes</label>
@@ -22,28 +22,28 @@
           </div>
         </div>
 
-        <div class="form-group row">
+        <!-- <div class="form-group row">
           <label for="gameClockSeconds" class="col-6 col-form-label">Seconds</label>
           <div class="col-6">
             <input type="number" class="form-control" id="gameClockSeconds" v-model="settings.gameDuration.second">
           </div>
-        </div>
+        </div> -->
 
         <h3>Shot Clock</h3>
 
-        <div class="form-group row">
+        <!-- <div class="form-group row">
           <label for="shotClockHour" class="col-6 col-form-label">Hours</label>
           <div class="col-6">
             <input type="number" class="form-control" id="shotClockHour" v-model="settings.shotDuration.hour">
           </div>
-        </div>
+        </div> -->
 
-        <div class="form-group row">
+        <!-- <div class="form-group row">
           <label for="shotClockMinutes" class="col-6 col-form-label">Minutes</label>
           <div class="col-6">
             <input type="number" class="form-control" id="shotClockMinutes" v-model="settings.shotDuration.minute">
           </div>
-        </div>
+        </div> -->
 
         <div class="form-group row">
           <label for="shotClockSeconds" class="col-6 col-form-label">Seconds</label>
@@ -54,7 +54,7 @@
 
         <h3>Shot Clock Limited</h3>
 
-        <div class="form-group row">
+        <!-- <div class="form-group row">
           <label for="shotClockLimitedHour" class="col-6 col-form-label">Hours</label>
           <div class="col-6">
             <input type="number" class="form-control" id="shotClockLimitedHour" v-model="settings.shotDurationLimited.hour">
@@ -66,7 +66,7 @@
           <div class="col-6">
             <input type="number" class="form-control" id="shotClockLimitedMinutes" v-model="settings.shotDurationLimited.minute">
           </div>
-        </div>
+        </div> -->
 
         <div class="form-group row">
           <label for="shotClockLimitedSeconds" class="col-6 col-form-label">Seconds</label>
