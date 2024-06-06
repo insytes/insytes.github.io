@@ -1,6 +1,21 @@
-html, body, #app {
-  height: 100vh;
+html,
+body,
+#app {
+  height: auto;
+  min-height: 100vh;
 }
+
 body {
-    background-color: #353230;
+  background-color: #397031;
+  background-image: linear-gradient(
+    rgba(0, 0, 0, .8),
+    rgba(0, 100, 0, .5)
+  ), url('/public/img/snooker-club-bg.jpeg');
+  background-position: center center;
+  background-attachment: scroll;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+  background-repeat: no-repeat;
 }

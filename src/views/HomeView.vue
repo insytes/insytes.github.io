@@ -31,11 +31,11 @@
           'btn-warning': gameState == gameStates.PROGRESS,
           'btn-danger': gameState != gameStates.PROGRESS && gameState !== gameStates.PAUSED,
         }" class="btn btn-lg btn-block mt-3" @click="
-  this.gameState == this.gameStates.PAUSED ? resumeGameTimer()
-    : this.gameState == this.gameStates.PROGRESS ? pauseGameTimer()
+  gameState == gameStates.PAUSED ? resumeGameTimer()
+    : gameState == gameStates.PROGRESS ? pauseGameTimer()
       : startGame()">
-          {{ this.gameState == this.gameStates.PAUSED ? 'Resume'
-            : this.gameState == this.gameStates.PROGRESS ? 'Pause'
+          {{ gameState == gameStates.PAUSED ? 'Resume'
+            : gameState == gameStates.PROGRESS ? 'Pause'
               : 'Break Off'
           }}
         </button>
