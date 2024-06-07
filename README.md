@@ -1,4 +1,4 @@
-# ballstars
+# Snooker Shootout
 
 ## Project setup
 ```
