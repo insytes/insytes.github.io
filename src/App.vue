@@ -9,7 +9,6 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 
   export default {
     setup(){
-      const db = window.indexedDB;
       const route = computed(() => useRoute().name)
       return { route }
     }

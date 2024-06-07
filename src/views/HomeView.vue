@@ -188,7 +188,6 @@ export default defineComponent({
     }
   },
   mounted() {
-    console.log('1234')
     Object.keys(sounds).forEach(sound => sounds[sound as Sound].muted = false)
   }
 })
