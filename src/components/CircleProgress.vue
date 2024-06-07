@@ -78,7 +78,8 @@ export default defineComponent({
 }
 
 .base-timer__path-remaining.arc {
-  color: #FF9500;
+  /* color: #FF9500; */
+  color: white;
 }
 
 .base-timer__label {

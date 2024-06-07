@@ -1,5 +1,5 @@
 <template>
-  <div v-if="shown">
+  <!-- <div v-if="shown">
     Add app to home screen?
 
     <button @click="installPWA">
@@ -9,14 +9,42 @@
     <button @click="dismissPrompt">
       No, thanks
     </button>
-  </div>
+  </div> -->
+
+  <Modal v-show="shown" @close="closeModal">
+    <template v-slot:header>
+      Install Snooker Shootout
+    </template>
+
+    <template v-slot:body>
+      You can use Snooker Shootout in the browser or install to your desktop!
+    </template>
+
+    <template v-slot:buttons>
+      <div class="row container-fluid">
+        <div class="col-6">
+          <button type="button" class='btn btn-block btn-green' @click="installPWA">Install!</button>
+        </div>
+        <div class="col-6">
+          <button type='button' class='btn btn-block btn-light' @click="dismissPrompt">No, thanks</button>
+        </div>
+      </div>
+    </template>
+  </Modal>
 </template>
 
 <script>
-export default {
+import Modal from '@/components/Modal.vue';
+import { defineComponent } from 'vue';
+
+export default defineComponent({
   data: () => ({
     shown: false,
   }),
+
+  components: {
+    Modal,
+  },
 
   beforeMount() {
     window.addEventListener('beforeinstallprompt', (e) => {
@@ -27,6 +55,10 @@ export default {
   },
 
   methods: {
+    closeModal() {
+      this.shown = false
+    },
+
     dismissPrompt() {
       this.shown = false
     },
@@ -43,5 +75,5 @@ export default {
       })
     },
   }
-}
+})
 </script>
