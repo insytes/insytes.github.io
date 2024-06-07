@@ -1,4 +1,5 @@
 # Snooker Shootout
+![screenshot](docs/screenshot.jpeg)
 
 ## Project setup
 ```
