@@ -14,7 +14,7 @@
       :style="{ width: gameTimePercent + '%' }" aria-valuemin="0" aria-valuemax="100"></div>
   </div>
   <div class="container h-100">
-    <div class="row h-100">
+    <div class="row h-100 justify-content-center">
       <div class="col-12 text-center align-items-start">
         <h1 class="display-4 text-light mt-5">{{ gameClock.time.format("mm:ss") }}</h1>
         <p class="text-light">Match Time</p>
@@ -24,26 +24,42 @@
           @click="gameState == gameStates.PROGRESS ? shotClock.isOn() ? resetShotTimer() : startShotTimer() : null"
           :max="getMaxShotTime().second" :value="shotClock.time.seconds()" :text="shotClock.time.format('s')" />
       </div>
-      <div class="col-12 px-5 py-2 mt-3 align-items-end">
-        <button class="btn btn-light btn-lg btn-block" @click="confirmGameReset()">New Game</button>
-        <button type="button" :class="{
+      <div class="col-lg-10 px-5 py-2 mt-3 align-items-end">
+        <div class="row text-center">
+        <button
+          type="button"
+          class="col-lg btn btn-light btn-lg m-3"
+          @click="confirmGameReset()">
+          New Game
+        </button>
+        <button
+          type="button"
+          class="col-lg m-3 btn btn-lg"
+          :class="{
           'btn-info': gameState == gameStates.PAUSED,
           'btn-warning': gameState == gameStates.PROGRESS,
           'btn-danger': gameState != gameStates.PROGRESS && gameState !== gameStates.PAUSED,
-        }" class="btn btn-lg btn-block mt-3" @click="
-  gameState == gameStates.PAUSED ? resumeGameTimer()
-    : gameState == gameStates.PROGRESS ? pauseGameTimer()
-      : startGame()">
+          }"
+          @click="gameState == gameStates.PAUSED ? resumeGameTimer() 
+          : gameState == gameStates.PROGRESS ? pauseGameTimer()
+          : startGame()">
           {{ gameState == gameStates.PAUSED ? 'Resume'
             : gameState == gameStates.PROGRESS ? 'Pause'
-              : 'Break Off'
+            : 'Break Off'
           }}
         </button>
-        <button :disabled="gameState != gameStates.PROGRESS" type="button" class="btn btn-lg btn-block mt-5" :class="{
+        <button
+          type="button"
+          class="col-lg m-3 btn btn-lg"
+          :disabled="gameState != gameStates.PROGRESS"
+          :class="{
           'btn-primary': !shotClock.isOn(),
           'btn-success': shotClock.isOn()
-        }" @click="shotClock.isOn() ? resetShotTimer() : startShotTimer()">{{
-  shotClock.isOn() ? "Reset" : "Start Shot" }}</button>
+          }"
+          @click="shotClock.isOn() ? resetShotTimer() : startShotTimer()">
+          {{ shotClock.isOn() ? "Reset" : "Start Shot" }}
+        </button>
+      </div>
       </div>
     </div>
   </div>

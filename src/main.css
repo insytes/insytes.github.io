@@ -1,8 +1,8 @@
 html,
 body,
-#app {
-  height: auto;
-  min-height: 100vh;
+#app
+{
+  height: 100%;
 }
 
 body {
@@ -16,6 +16,6 @@ body {
   -webkit-background-size: cover;
   -moz-background-size: cover;
   -o-background-size: cover;
-  background-size: cover;
-  background-repeat: no-repeat;
+  background-size:cover;
+  background-repeat:no-repeat;
 }
