@@ -1,8 +1,6 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import SettingsView from '../views/SettingsView.vue'
-import LoginVue from '@/views/Login.vue'
-import { state } from '@/lib/store'
 
 const routes: Array<RouteRecordRaw> = [
   {

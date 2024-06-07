@@ -1,25 +1,29 @@
-const { defineConfig } = require('@vue/cli-service')
+const { defineConfig } = require('@vue/cli-service');
+const fs = require('fs');
+
 module.exports = defineConfig({
   transpileDependencies: true,
-  publicPath: process.env.NODE_ENV === 'production'
-    ? '/'
-    : '/',
+  publicPath: '/',
   devServer: {
     open: process.platform === 'darwin',
-    host: '0.0.0.0',
+    host: process.env.TEST_DEVICE ? '0.0.0.0' : 'snooker-shootout.local',
     port: 8080, // CHANGE YOUR PORT HERE!
-    https: true,
+    https: process.env.TEST_DEVICE ? true : {
+      key: fs.readFileSync('./certs/snooker-shootout.local+4-key.pem'),
+      cert: fs.readFileSync('./certs/snooker-shootout.local+4.pem'),
+    },
   },
   pwa: {
     // ...Other pwa config options
     name: "Shootout",
-    themeColor: "#ffd100",
-    icons: {
-      favicon32: 'img/icons/icon-32x32.png',
-      favicon16: 'img/icons/icon-16x16.png',
+    themeColor: "#09100A",
+    background_color: '#283A20',
+    iconPaths: {
+      favicon32: 'favicon-32x32.png',
+      favicon16: 'favicon-32x32.png',
       appleTouchIcon: 'img/icons/icon-152x152.png',
-      maskIcon: 'img/icons/safari-pinned-tab.svg',
-      msTileImage: 'img/icons/icon-144x144.png'
+      // maskIcon: 'img/icons/safari-pinned-tab.svg',
+      // msTileImage: 'img/icons/icon-144x144.png'
     }
   }
-})
+});

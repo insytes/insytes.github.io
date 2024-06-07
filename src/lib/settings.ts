@@ -3,40 +3,42 @@ const DB_VERSION = 1;
 let DB: IDBDatabase;
 
 const settings = {
-  state:{
-  limitedTime: 5,
-  gameDuration: {
-    hour: 0,
-    minute: 10,
-    second: 0,
-  },
-  shotDuration: {
-    hour: 0,
-    minute: 0,
-    second: 15,
-  },
-  shotDurationLimited: {
-    hour: 0,
-    minute: 0,
-    second: 10,
-  },
-  sounds: {
-    playBeep: true,
-    playShotClockBuzzer: true,
-    playLimitedShotClockVoice: true,
-    playFinalMinuteVoice: true,
-    playGameOverVoice: true,
-    playGameOverBuzzer: true,
+  state: {
+    limitedTime: 5,
+    gameDuration: {
+      hour: 0,
+      minute: 10,
+      second: 0,
+    },
+    shotDuration: {
+      hour: 0,
+      minute: 0,
+      second: 15,
+    },
+    shotDurationLimited: {
+      hour: 0,
+      minute: 0,
+      second: 10,
+    },
+    sounds: {
+      playBeep: true,
+      playShotClockBuzzer: true,
+      playLimitedShotClockVoice: true,
+      playFinalMinuteVoice: true,
+      playGameOverVoice: true,
+      playGameOverBuzzer: true,
+    }
   }
-}
-} as Record<string, any>
+};
+
+type SettingsModel = typeof settings.state;
 
 export default class Settings {
   static init() {
     return new Promise((resolve, reject) => {
       const request = window.indexedDB.open(DB_NAME, DB_VERSION);
       let install = false;
-      request.onerror = e => {
+      request.onerror = () => {
         reject('Error');
       };
 
@@ -51,14 +53,14 @@ export default class Settings {
           install = false;
         } else {
           const objectStoreRequest = store.get(1);
-          objectStoreRequest.onsuccess = (event) => {
+          objectStoreRequest.onsuccess = () => {
             settings.state = objectStoreRequest.result
             resolve(DB);
           };
         }
       };
 
-      request.onupgradeneeded = e => {
+      request.onupgradeneeded = () => {
         const db = request.result;
         db.createObjectStore("settings", { autoIncrement: true, keyPath: 'id' });
         install = true;
@@ -89,7 +91,7 @@ export default class Settings {
     return DB;
   }
 
-  static get settings() {
+  static get settings(): SettingsModel {
     return settings.state
   }
 
