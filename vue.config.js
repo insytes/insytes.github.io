@@ -1,4 +1,5 @@
 const { defineConfig } = require('@vue/cli-service');
+const package = require('./package.json');
 const fs = require('fs');
 
 module.exports = defineConfig({
@@ -14,6 +15,7 @@ module.exports = defineConfig({
     },
   },
   pwa: {
+    assetsVersion: package.version,
     // ...Other pwa config options
     name: "Shootout",
     themeColor: "#09100A",
