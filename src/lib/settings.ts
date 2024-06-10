@@ -43,7 +43,6 @@ export default class Settings {
       };
 
       request.onsuccess = e => {
-        console.log(e);
         DB = request.result;
         const trans = DB.transaction(['settings'], 'readwrite');
         const store = trans.objectStore('settings');
@@ -73,15 +72,12 @@ export default class Settings {
     return new Promise<void>((resolve, reject) => {
       const DBDeleteRequest = window.indexedDB.deleteDatabase(DB_NAME);
       DBDeleteRequest.onerror = () => {
-        console.log('Could not deelte DB');
         reject();
       }
       DBDeleteRequest.onsuccess = () => {
-        console.log('DB deleted')
         resolve();
       };
       DBDeleteRequest.onblocked = () => {
-        console.log('DB delete blocked');
         reject();
       }
     });
@@ -92,17 +88,18 @@ export default class Settings {
   }
 
   static get settings(): SettingsModel {
-    return settings.state
+    return JSON.parse(JSON.stringify(settings.state))
   }
 
-  static save() {
+  static save(_settings: SettingsModel) {
     return new Promise<void>(resolve => {
       const trans = Settings.db.transaction(['settings'], 'readwrite');
       trans.oncomplete = () => {
         resolve();
       }
       const store = trans.objectStore('settings');
-      store.put({ id: 1, ...settings.state });
+      store.put({ id: 1, ..._settings });
+      settings.state = _settings;
     });
   }
 }
