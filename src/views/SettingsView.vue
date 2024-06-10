@@ -112,11 +112,12 @@ export default defineComponent({
       if (confirm('Are you sure you want to reset game settings?')) {
         try {
           await Settings.reset();
-          router.push('/');
         } catch (e) {
+          /* probably db locked */
           console.log(e);
+        } finally {
+          location.reload();
         }
-        return;
       }
     }
   }
