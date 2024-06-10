@@ -34,45 +34,65 @@
           </div>
         </div>
 
+        <hr />
+
         <div class="row">
-          <label for="playBeep" class="col-7 col-form-label">Shot Beep</label>
+          <label for="playBeep" class="col-6 col-sm-5 col-md-4 col-form-label">Shot Beep</label>
           <div class="col-5">
-            <input type="checkbox" id="playBeep" class="form-check-input" v-model="settings.sounds.playBeep" />
+            <div class="custom-control custom-switch">
+              <input type="checkbox" class="custom-control-input" id="playBeep" v-model="settings.sounds.playBeep">
+              <label class="custom-control-label" for="playBeep"></label>
+            </div>
           </div>
         </div>
 
         <div class="row">
-          <label for="playBuzz" class="col-7 col-form-label">Shot Buzzer</label>
+          <label for="playBuzz" class="col-6 col-sm-5 col-md-4 col-form-label">Shot Buzzer</label>
           <div class="col-5">
-            <input type="checkbox" id="playBuzz" class="form-check-input" v-model="settings.sounds.playShotClockBuzzer" />
+            <div class="custom-control custom-switch">
+              <input type="checkbox" id="playBuzz" class="custom-control-input" v-model="settings.sounds.playShotClockBuzzer" />
+              <label class="custom-control-label" for="playBuzz"></label>
+            </div>
           </div>
         </div>
 
         <div class="row">
-          <label for="playLimitedShotClock" class="col-7 col-form-label">Limited Shot Clock Voice</label>
+          <label for="playLimitedShotClock" class="col-6 col-sm-5 col-md-4 col-form-label">Limited Shot Clock Voice</label>
           <div class="col-5">
-            <input type="checkbox" id="playLimitedShotClock" class="form-check-input" v-model="settings.sounds.playLimitedShotClockVoice" />
+            <div class="custom-control custom-switch">
+              <input type="checkbox" id="playLimitedShotClock" class="custom-control-input" v-model="settings.sounds.playLimitedShotClockVoice" />
+              <label class="custom-control-label" for="playLimitedShotClock"></label>
+            </div>
           </div>
         </div>
 
         <div class="row">
-          <label for="playLastMinute" class="col-7 col-form-label">Last Minute Reminder</label>
+          <label for="playLastMinute" class="col-6 col-sm-5 col-md-4 col-form-label">Last Minute Reminder</label>
           <div class="col-5">
-            <input type="checkbox" id="playLastMinute" class="form-check-input" v-model="settings.sounds.playFinalMinuteVoice" />
+            <div class="custom-control custom-switch">
+              <input type="checkbox" id="playLastMinute" class="custom-control-input" v-model="settings.sounds.playFinalMinuteVoice" />
+              <label class="custom-control-label" for="playLastMinute"></label>
+            </div>
           </div>
         </div>
 
         <div class="row">
-          <label for="playGameOverVoice" class="col-7 col-form-label">Game Over Voice</label>
+          <label for="playGameOverVoice" class="col-6 col-sm-5 col-md-4 col-form-label">Game Over Voice</label>
           <div class="col-5">
-            <input type="checkbox" id="playGameOverVoice" class="form-check-input" v-model="settings.sounds.playGameOverVoice" />
+            <div class="custom-control custom-switch">
+              <input type="checkbox" id="playGameOverVoice" class="custom-control-input" v-model="settings.sounds.playGameOverVoice" />
+              <label class="custom-control-label" for="playGameOverVoice"></label>
+            </div>
           </div>
         </div>
 
         <div class="row">
-          <label for="playGameOverBuzzer" class="col-7 col-form-label">Game Over Buzzer</label>
+          <label for="playGameOverBuzzer" class="col-6 col-sm-5 col-md-4 col-form-label">Game Over Buzzer</label>
           <div class="col-5">
-            <input type="checkbox" id="playGameOverBuzzer" class="form-check-input" v-model="settings.sounds.playGameOverBuzzer" />
+            <div class="custom-control custom-switch">
+              <input type="checkbox" id="playGameOverBuzzer" class="custom-control-input" v-model="settings.sounds.playGameOverBuzzer" />
+              <label class="custom-control-label" for="playGameOverBuzzer"></label>
+            </div>
           </div>
         </div>
 
