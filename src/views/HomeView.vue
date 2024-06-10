@@ -83,11 +83,11 @@ enum GAME_STATE {
 }
 
 const sounds = {
-  beep: new Audio('beep-08b.mp3'),
-  buzz: new Audio('buzzer.mp3'),
-  gameOverVoice: new Audio('game-over-voice.mp3'),
-  limitedShotClockVoice: new Audio('limited-shot-clock-activated.mp3'),
-  oneMinuteLeftVoice: new Audio('one-minute-left.mp3'),
+  beep: new Audio('audio/beep-08b.mp3'),
+  buzz: new Audio('audio/buzzer.mp3'),
+  gameOverVoice: new Audio('audio/game-over-voice.mp3'),
+  limitedShotClockVoice: new Audio('audio/limited-shot-clock-activated.mp3'),
+  oneMinuteLeftVoice: new Audio('audio/one-minute-left.mp3'),
 } satisfies Record<string, HTMLAudioElement>
 
 type Sound = keyof typeof sounds;
@@ -188,7 +188,7 @@ export default defineComponent({
     }
   },
   mounted() {
-    Object.keys(sounds).forEach(sound => sounds[sound as Sound].muted = false)
+    Object.values(sounds).forEach(sound => sound.muted = false && sound.load())
   }
 })
 </script>

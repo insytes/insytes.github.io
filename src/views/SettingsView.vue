@@ -5,74 +5,32 @@
         <h2 class="text-light mt-5">Settings</h2>
       </div>
       <div class="col-12 align-items-center text-light">
-        
-        <!-- <div class="row">
-          <label for="gameClockHour" class="col-6 col-form-label">Hours</label>
-          <div class="col-6">
-            <input type="number" class="form-control" id="gameClockHour" v-model="settings.gameDuration.hour">
-          </div>
-        </div> -->
 
         <div class="row">
           <label for="gameClockMinutes" class="col-8 col-form-label">Game time (minutes)</label>
           <div class="col-3">
-            <input type="number" class="form-control" id="gameClockMinutes" v-model="settings.gameDuration.minute">
+            <input type="number" class="form-control" id="gameClockMinutes" v-model="settings.gameDuration.minute" max="60" min="0">
           </div>
         </div>
-
-        <!-- <div class="row">
-          <label for="gameClockSeconds" class="col-6 col-form-label">Seconds</label>
-          <div class="col-6">
-            <input type="number" class="form-control" id="gameClockSeconds" v-model="settings.gameDuration.second">
-          </div>
-        </div> -->
-
-        <!-- <div class="row">
-          <label for="shotClockHour" class="col-6 col-form-label">Hours</label>
-          <div class="col-6">
-            <input type="number" class="form-control" id="shotClockHour" v-model="settings.shotDuration.hour">
-          </div>
-        </div> -->
-
-        <!-- <div class="row">
-          <label for="shotClockMinutes" class="col-6 col-form-label">Minutes</label>
-          <div class="col-6">
-            <input type="number" class="form-control" id="shotClockMinutes" v-model="settings.shotDuration.minute">
-          </div>
-        </div> -->
 
         <div class="row">
           <label for="shotClockSeconds" class="col-8 col-form-label">Shot clock (seconds)</label>
           <div class="col-3">
-            <input type="number" class="form-control" id="shotClockSeconds" v-model="settings.shotDuration.second">
+            <input type="number" class="form-control" id="shotClockSeconds" v-model="settings.shotDuration.second" min="1" max="60">
           </div>
         </div>
-
-        <!-- <div class="row">
-          <label for="shotClockLimitedHour" class="col-6 col-form-label">Hours</label>
-          <div class="col-6">
-            <input type="number" class="form-control" id="shotClockLimitedHour" v-model="settings.shotDurationLimited.hour">
-          </div>
-        </div>
-
-        <div class="row">
-          <label for="shotClockLimitedMinutes" class="col-6 col-form-label">Minutes</label>
-          <div class="col-6">
-            <input type="number" class="form-control" id="shotClockLimitedMinutes" v-model="settings.shotDurationLimited.minute">
-          </div>
-        </div> -->
 
         <div class="row">
           <label for="shotClockLimitedSeconds" class="col-8 col-form-label">Limited Shot Clock (seconds)</label>
           <div class="col-3">
-            <input type="number" class="form-control" id="shotClockLimitedSeconds" v-model="settings.shotDurationLimited.second">
+            <input type="number" class="form-control" id="shotClockLimitedSeconds" v-model="settings.shotDurationLimited.second" min="1" max="60" />
           </div>
         </div>
 
         <div class="row">
           <label for="limitedShotClock" class="col-8 col-form-label">Limited Shot Clock Starts (minutes)</label>
           <div class="col-3">
-            <input type="number" class="form-control" id="limitedShotClock" v-model="settings.limitedTime">
+            <input type="number" class="form-control" id="limitedShotClock" v-model="settings.limitedTime" min="0" max="60">
           </div>
         </div>
 
@@ -131,7 +89,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent, toRaw } from 'vue';
 import Settings from '@/lib/settings';
 import router from '@/router';
 
@@ -147,9 +105,8 @@ export default defineComponent({
       router.push('/');
     },
     async save() {
-      console.log(Settings.settings)
-      await Settings.save();
-      alert('Settings updated');
+      await Settings.save(toRaw(this.settings));
+      this.$toast.success('Settings updated');
     },
     async reset() {
       if (confirm('Are you sure you want to reset game settings?')) {
