@@ -1,32 +1,33 @@
-import moment from "moment";
 import { EventEmitter } from "./events";
+import dayjs, { ConfigTypeMap } from "dayjs";
+import objectSupport from 'dayjs/plugin/objectSupport';
 
 interface ITimer {
   isOn(): void;
   reset(): void;
   start(): void;
   stop(): void;
-  // time(): moment.Moment;
 }
 
 export type TimerEventData = {
-  time: moment.Moment
+  time: dayjs.Dayjs
 }
 
 export type TimerEvent = "ended" | "started" | "stopped" | "tick" | "reset";
 
 export class Timer extends EventEmitter<Timer, TimerEvent, TimerEventData> implements ITimer {
   private tick = 0;
-  private moment: moment.Moment;
+  private dayjs: dayjs.Dayjs;
 
-  constructor(public units: moment.MomentInputObject) {
+  constructor(public units: ConfigTypeMap["objectSupport"]) {
     super();
-    this.moment = moment(units);
+    dayjs.extend(objectSupport);
+    this.dayjs = dayjs(units);
   }
 
-  reset(units?: moment.MomentInputObject) {
+  reset(units?: ConfigTypeMap["objectSupport"]) {
     this.stop();
-    this.moment.set(units ?? this.units);
+    this.dayjs = this.dayjs.set(units ?? this.units);
     this.dispatchEvent("reset", this.getEventData());
   }
 
@@ -50,29 +51,19 @@ export class Timer extends EventEmitter<Timer, TimerEvent, TimerEventData> imple
   }
 
   get time() {
-    return this.moment.clone();
-  }
-
-  get ms() {
-    return moment.duration(this.time.format("HH:mm:ss")).asMilliseconds();
-  }
-
-  get percent() {
-    const totalTime = moment.duration(this.units).asSeconds();
-    const currentTime = moment.duration(this.time.format('HH:mm:ss')).asSeconds();
-    return (currentTime / totalTime) * 100 - 0.0001;
+    return this.dayjs
   }
 
   private getEventData(): TimerEventData {
     return {
-      time: this.time.clone()
+      time: this.dayjs
     }
   }
 
   private tickHandler(): void {
-    this.moment = this.moment.subtract(1, "second");
+    this.dayjs = this.dayjs.subtract(1, "second");
     const { time } = this;
-    if (time.hours() + time.minutes() + time.seconds() === 0) {
+    if (time.get('hours') + time.get('minutes') + time.get('seconds') === 0) {
       this.dispatchEvent("ended", this.getEventData());
       this.stop();
       return;

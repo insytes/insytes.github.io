@@ -2,6 +2,8 @@ const { defineConfig } = require('@vue/cli-service');
 const package = require('./package.json');
 const fs = require('fs');
 
+process.env.VUE_APP_VERSION = 'v'+package.version
+
 module.exports = defineConfig({
   transpileDependencies: true,
   publicPath: '/',
