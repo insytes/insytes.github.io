@@ -5,6 +5,7 @@ node_modules
 /tests/e2e/screenshots/
 *.cache
 firebase-debug.log
+dist
 
 # local env files
 .env.local

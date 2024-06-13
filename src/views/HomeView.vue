@@ -1,65 +1,54 @@
 <template>
   <PWAPromptVue />
   <div class="fixed-top text-right p-3">
-    <router-link to="settings" v-if="gameState !== gameStates.PROGRESS && gameState !== gameStates.PAUSED">
+    <router-link to="settings" v-if="gameState == gameStates.Ready">
       <svg width="56" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none">
-        <path stroke="#eee" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 21h-4l-.551-2.48a6.991 6.991 0 0 1-1.819-1.05l-2.424.763-2-3.464 1.872-1.718a7.055 7.055 0 0 1 0-2.1L3.206 9.232l2-3.464 2.424.763A6.992 6.992 0 0 1 9.45 5.48L10 3h4l.551 2.48a6.992 6.992 0 0 1 1.819 1.05l2.424-.763 2 3.464-1.872 1.718a7.05 7.05 0 0 1 0 2.1l1.872 1.718-2 3.464-2.424-.763a6.99 6.99 0 0 1-1.819 1.052L14 21z"/>
-        <circle cx="12" cy="12" r="3" stroke="#eee" stroke-width="2"/>
+        <path stroke="#ccc" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          d="M14 21h-4l-.551-2.48a6.991 6.991 0 0 1-1.819-1.05l-2.424.763-2-3.464
+          1.872-1.718a7.055 7.055 0 0 1 0-2.1L3.206 9.232l2-3.464 2.424.763A6.992
+          6.992 0 0 1 9.45 5.48L10 3h4l.551 2.48a6.992 6.992 0 0 1 1.819
+          1.05l2.424-.763 2 3.464-1.872 1.718a7.05 7.05 0 0 1 0 2.1l1.872
+          1.718-2 3.464-2.424-.763a6.99 6.99 0 0 1-1.819 1.052L14 21z" />
+        <circle cx="12" cy="12" r="3" stroke="#ccc" stroke-width="2" />
       </svg>
     </router-link>
   </div>
-  <div class="progress rounded-0 d-none">
-    <div class="progress-bar rounded-0"
-      :class="{ 'bg-danger': (gameTimePercent <= 10), 'bg-warning': (gameTimePercent <= 20) }" role="progressbar"
-      :style="{ width: gameTimePercent + '%' }" aria-valuemin="0" aria-valuemax="100"></div>
-  </div>
+
   <div class="container h-100">
     <div class="row h-100 justify-content-center">
       <div class="col-12 text-center align-items-start">
-        <h1 class="display-4 text-light mt-5">{{ gameClock.time.format("mm:ss") }}</h1>
+        <h1 class="display-4 text-light mt-5">{{ gameTime }}</h1>
         <p class="text-light">Match Time</p>
       </div>
       <div class="col-12 d-flex justify-content-center align-items-center" ref="countdownContainer">
         <circle-progress
-          @click="gameState == gameStates.PROGRESS ? shotClock.isOn() ? resetShotTimer() : startShotTimer() : null"
-          :max="getMaxShotTime().second" :value="shotClock.time.seconds()" :text="shotClock.time.format('s')" />
+          @click="gameState == gameStates.Progress ? shotClock.isOn() ? resetShotTimer() : startShotTimer() : null"
+          :max="getMaxShotTime().second" :value="shotClock.time.get('seconds')" :text="shotTime" />
       </div>
       <div class="col-lg-10 px-5 py-2 mt-3 align-items-end">
         <div class="row text-center">
-        <button
-          type="button"
-          class="col-lg btn btn-light btn-lg m-3"
-          @click="confirmGameReset()">
-          New Game
-        </button>
-        <button
-          type="button"
-          class="col-lg m-3 btn btn-lg"
-          :class="{
-          'btn-info': gameState == gameStates.PAUSED,
-          'btn-warning': gameState == gameStates.PROGRESS,
-          'btn-danger': gameState != gameStates.PROGRESS && gameState !== gameStates.PAUSED,
-          }"
-          @click="gameState == gameStates.PAUSED ? resumeGameTimer() 
-          : gameState == gameStates.PROGRESS ? pauseGameTimer()
-          : startGame()">
-          {{ gameState == gameStates.PAUSED ? 'Resume'
-            : gameState == gameStates.PROGRESS ? 'Pause'
-            : 'Break Off'
-          }}
-        </button>
-        <button
-          type="button"
-          class="col-lg m-3 btn btn-lg"
-          :disabled="gameState != gameStates.PROGRESS"
-          :class="{
-          'btn-primary': !shotClock.isOn(),
-          'btn-success': shotClock.isOn()
-          }"
-          @click="shotClock.isOn() ? resetShotTimer() : startShotTimer()">
-          {{ shotClock.isOn() ? "Reset" : "Start Shot" }}
-        </button>
-      </div>
+          <button type="button" class="col-lg btn btn-light btn-lg m-3" @click="confirmGameReset()">
+            New Game
+          </button>
+          <button type="button" class="col-lg m-3 btn btn-lg" :class="{
+            'btn-info': gameState == gameStates.Paused,
+            'btn-warning': gameState == gameStates.Progress,
+            'btn-danger': gameState != gameStates.Progress && gameState !== gameStates.Paused,
+          }" @click="gameState == gameStates.Paused ? resumeGameTimer()
+  : gameState == gameStates.Progress ? pauseGameTimer()
+    : startGame()">
+            {{ gameState == gameStates.Paused ? 'Resume'
+              : gameState == gameStates.Progress ? 'Pause'
+                : 'Break Off'
+            }}
+          </button>
+          <button type="button" class="col-lg m-3 btn btn-lg" :disabled="gameState != gameStates.Progress" :class="{
+            'btn-primary': !shotClock.isOn(),
+            'btn-success': shotClock.isOn()
+          }" @click="shotClock.isOn() ? resetShotTimer() : startShotTimer()">
+            {{ shotClock.isOn() ? "Reset" : "Start Shot" }}
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -67,30 +56,20 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import moment from 'moment'
+import dayjs from 'dayjs';
 import PWAPromptVue from '@/components/PWAPrompt.vue'
 import { Timer, TimerEventData } from '@/lib/timer';
 import CircleProgress from '@/components/CircleProgress.vue';
 import { IEvent } from '@/lib/events';
 import Settings from '@/lib/settings';
+import { playAudio, AudioName } from '@/lib/audio';
 
-enum GAME_STATE {
-  READY,
-  PROGRESS,
-  STARTED,
-  PAUSED,
-  ENDED
+enum GameStates {
+  Paused,
+  Progress,
+  Ready,
+  Started,
 }
-
-const sounds = {
-  beep: new Audio('audio/beep-08b.mp3'),
-  buzz: new Audio('audio/buzzer.mp3'),
-  gameOverVoice: new Audio('audio/game-over-voice.mp3'),
-  limitedShotClockVoice: new Audio('audio/limited-shot-clock-activated.mp3'),
-  oneMinuteLeftVoice: new Audio('audio/one-minute-left.mp3'),
-} satisfies Record<string, HTMLAudioElement>
-
-type Sound = keyof typeof sounds;
 
 export default defineComponent({
   data() {
@@ -98,9 +77,17 @@ export default defineComponent({
       settings: Settings.settings,
       gameClock: new Timer(Settings.settings.gameDuration),
       shotClock: new Timer(Settings.settings.shotDuration),
-      gameState: GAME_STATE.READY,
-      gameStates: GAME_STATE,
+      gameState: GameStates.Ready,
+      gameStates: GameStates,
       gameTimePercent: 100,
+    }
+  },
+  computed: {
+    gameTime() {
+      return this.gameClock.time.format('mm:ss');
+    },
+    shotTime() {
+      return this.shotClock.time.format('s');
     }
   },
   components: {
@@ -109,21 +96,20 @@ export default defineComponent({
   },
   methods: {
     startGame() {
-      this.gameClock.on("ended", () => this.playSound('buzz', { endGame: true }));
-      this.gameClock.on("ended", this.resetGameTimer);
-      this.gameClock.on("ended", () => this.gameState = this.gameStates.ENDED);
-      this.gameClock.on("started", () => this.gameState = this.gameStates.PROGRESS);
-      this.gameClock.on("stopped", () => this.gameState = this.gameStates.PAUSED);
-      this.gameClock.on("tick", () => this.gameTimePercent = this.gameClock.percent)
+      this.gameClock.on("started", () => this.gameState = this.gameStates.Progress);
+      this.gameClock.on("stopped", () => this.gameState = this.gameStates.Paused);
+      this.gameClock.on("ended", () => this.gameState = this.gameStates.Ready);
       this.gameClock.on("tick", this.couldMakeShotClockVoice);
       this.gameClock.on("tick", this.couldMakeFinalMinuteVoice);
-      this.gameClock.on("ended", () => setTimeout(() => this.playSound('gameOverVoice'), 1300));
+      this.gameClock.on("ended", this.resetGameTimer);
+      this.gameClock.on("ended", () => this.playAudio('gameEnded'));
+      this.gameClock.on("ended", () => setTimeout(() => this.playAudio('gameOverVoice'), 1300));
       this.gameClock.start();
     },
     startShotTimer() {
       this.shotClock.reset(this.getMaxShotTime());
       this.shotClock.on("tick", this.couldMakeBeepSound);
-      this.shotClock.on("ended", () => this.playSound('buzz'));
+      this.shotClock.on("ended", () => this.playAudio('shotEnded'));
       this.shotClock.on("ended", this.shotClock.stop.bind(this));
       this.shotClock.start();
     },
@@ -131,11 +117,11 @@ export default defineComponent({
       if (confirm('Are you sure you want to reset the game?')) {
         this.resetShotTimer()
         this.resetGameTimer()
-        this.gameState = this.gameStates.READY
+        this.gameState = this.gameStates.Ready
       }
     },
-    getMaxShotTime(): moment.MomentInputObject {
-      return this.gameClock.time.minutes() < this.settings.limitedTime
+    getMaxShotTime() {
+      return this.gameClock.time.get('minutes') < this.settings.limitedTime
         ? this.settings.shotDurationLimited
         : this.settings.shotDuration
     },
@@ -145,7 +131,7 @@ export default defineComponent({
     },
     resumeGameTimer() {
       this.gameClock.start();
-      if (this.shotClock.time.seconds() !== moment(this.getMaxShotTime()).seconds()) {
+      if (this.shotClock.time.get('seconds') !== dayjs(this.getMaxShotTime()).get('seconds')) {
         this.shotClock.start();
       }
     },
@@ -159,36 +145,34 @@ export default defineComponent({
       this.shotClock.reset(this.getMaxShotTime())
     },
     couldMakeFinalMinuteVoice(event: IEvent<Timer, TimerEventData>) {
-      if (event.target.time.seconds() == 0 && event.target.time.minute() == 1) {
-        this.playSound('oneMinuteLeftVoice');
+      if (event.target.time.get('seconds') == 0 && event.target.time.minute() == 1) {
+        this.playAudio('oneMinuteLeftVoice');
       }
     },
     couldMakeShotClockVoice(event: IEvent<Timer, TimerEventData>) {
-      if (event.target.time.seconds() == 0 && event.target.time.minutes() == this.settings.limitedTime) {
-        this.playSound('limitedShotClockVoice');
+      if (event.target.time.get('seconds') == 0 && event.target.time.get('minutes') == this.settings.limitedTime) {
+        this.playAudio('limitedShotClockVoice');
       }
     },
-    couldMakeBeepSound(event:IEvent<Timer, TimerEventData> ) {
-      if (event.target.time.seconds() <= 5) {
-        this.playSound('beep');
+    couldMakeBeepSound(event: IEvent<Timer, TimerEventData>) {
+      if (event.target.time.get('seconds') <= 5) {
+        this.playAudio('beep');
       }
     },
-    playSound(sound: Sound, { endGame = false } = {}) {
-      const soundsMap: Record<Sound, boolean> = {
+    playAudio(name: AudioName) {
+      const audioSettingsMap: Record<AudioName, boolean> = {
         'beep': this.settings.sounds.playBeep,
-        'buzz': endGame ? this.settings.sounds.playGameOverBuzzer : this.settings.sounds.playShotClockBuzzer,
+        'shotEnded': this.settings.sounds.playShotClockBuzzer,
+        'gameEnded': this.settings.sounds.playGameOverBuzzer,
         'gameOverVoice': this.settings.sounds.playGameOverVoice,
         'limitedShotClockVoice': this.settings.sounds.playLimitedShotClockVoice,
         'oneMinuteLeftVoice': this.settings.sounds.playFinalMinuteVoice,
       }
 
-      if (soundsMap[sound]) {
-        sounds[sound].play();
+      if (Object.hasOwn(audioSettingsMap, name)) {
+        playAudio(name);
       }
     }
-  },
-  mounted() {
-    Object.values(sounds).forEach(sound => sound.muted = false && sound.load())
   }
 })
 </script>
