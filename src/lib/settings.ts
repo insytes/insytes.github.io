@@ -42,7 +42,7 @@ export default class Settings {
         reject('Error');
       };
 
-      request.onsuccess = e => {
+      request.onsuccess = () => {
         DB = request.result;
         const trans = DB.transaction(['settings'], 'readwrite');
         const store = trans.objectStore('settings');

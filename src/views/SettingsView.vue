@@ -3,6 +3,7 @@
     <div class="row h-100">
       <div class="col-12 text-center align-items-start">
         <h2 class="text-light mt-5">Settings</h2>
+        <p class="text-light">{{ version  }}</p>
       </div>
       <div class="col-12 align-items-center text-light">
 
@@ -113,10 +114,10 @@ import { defineComponent, toRaw } from 'vue';
 import Settings from '@/lib/settings';
 import router from '@/router';
 
-
 export default defineComponent({
   data() {
     return {
+      version: process.env.VUE_APP_VERSION,
       settings: Settings.settings
     }
   },

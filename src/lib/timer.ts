@@ -1,15 +1,12 @@
-import moment from "moment";
 import { EventEmitter } from "./events";
 import dayjs, { ConfigTypeMap } from "dayjs";
 import objectSupport from 'dayjs/plugin/objectSupport';
-dayjs.extend(objectSupport);
 
 interface ITimer {
   isOn(): void;
   reset(): void;
   start(): void;
   stop(): void;
-  // time(): moment.Moment;
 }
 
 export type TimerEventData = {
@@ -22,12 +19,13 @@ export class Timer extends EventEmitter<Timer, TimerEvent, TimerEventData> imple
   private tick = 0;
   private dayjs: dayjs.Dayjs;
 
-  constructor(public units: ConfigTypeMap['objectSupport']) {
+  constructor(public units: ConfigTypeMap["objectSupport"]) {
     super();
+    dayjs.extend(objectSupport);
     this.dayjs = dayjs(units);
   }
 
-  reset(units?: ConfigTypeMap['objectSupport']) {
+  reset(units?: ConfigTypeMap["objectSupport"]) {
     this.stop();
     this.dayjs = this.dayjs.set(units ?? this.units);
     this.dispatchEvent("reset", this.getEventData());
