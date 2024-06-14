@@ -1,8 +1,11 @@
 import { createApp } from 'vue'
 import App from './App.vue'
+import { VueFire, VueFireAuth } from 'vuefire'
+import { firebaseApp } from './lib/firebase'
+
 import './registerServiceWorker'
 import router from './router'
-import ToastPlugin from 'vue-toast-notification';
+import ToastPlugin, { ToastProps, useToast } from 'vue-toast-notification';
 import 'vue-toast-notification/dist/theme-bootstrap.css';
 
 import './main.css';
@@ -11,9 +14,20 @@ import Settings from './lib/settings'
 
 const app = createApp(App);
 
-app.use(ToastPlugin, {
+const toastOptions = {
   duration: 3000,
   position: 'top-right'
+}
+app.use(ToastPlugin, toastOptions);
+app.provide('$toast', useToast(toastOptions as ToastProps))
+
+app.use(VueFire, {
+  // imported above but could also just be created here
+  firebaseApp,
+  modules: [
+    // we will see other modules later on
+    VueFireAuth(),
+  ],
 });
 
 (async () => {

@@ -16,7 +16,7 @@ export type TimerEventData = {
 export type TimerEvent = "ended" | "started" | "stopped" | "tick" | "reset";
 
 export class Timer extends EventEmitter<Timer, TimerEvent, TimerEventData> implements ITimer {
-  private tick = 0;
+  private tick: null | ReturnType<typeof setTimeout> = null
   private dayjs: dayjs.Dayjs;
 
   constructor(public units: ConfigTypeMap["objectSupport"]) {
@@ -41,7 +41,7 @@ export class Timer extends EventEmitter<Timer, TimerEvent, TimerEventData> imple
   stop() {
     if (this.tick) {
       clearInterval(this.tick);
-      this.tick = 0;
+      this.tick = null;
       this.dispatchEvent("stopped", this.getEventData());
     }
   }
