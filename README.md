@@ -1,4 +1,8 @@
-# ballstars
+# Snooker Shootout   
+
+[Snooker Shootout](https://snooker-shootout.web.app/) is a timer for shootout matches, available on Mobile, Web and Desktop.
+
+![screenshot](docs/screenshot.jpeg)
 
 ## Project setup
 ```
