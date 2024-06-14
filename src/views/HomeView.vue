@@ -12,6 +12,14 @@
         <circle cx="12" cy="12" r="3" stroke="#ccc" stroke-width="2" />
       </svg>
     </router-link>
+
+    <router-link to="profile">
+    <svg width="56" viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg">
+      <rect fill="none" height="56" width="56"/>
+      <circle cx="128" cy="120" r="44" stroke="#ccc" fill="#ccc"/>
+      <path fill="#ccc" stroke="#ccc" d="M128,24A104,104,0,1,0,232,128,104.2,104.2,0,0,0,128,24Zm65.8,162.4a81.3,81.3,0,0,0-24.5-23,59.7,59.7,0,0,1-82.6,0,81.3,81.3,0,0,0-24.5,23,88,88,0,1,1,131.6,0Z"/>
+    </svg>
+    </router-link>
   </div>
 
   <div class="container h-100">
@@ -62,7 +70,7 @@ import { Timer, TimerEventData } from '@/lib/timer';
 import CircleProgress from '@/components/CircleProgress.vue';
 import { IEvent } from '@/lib/events';
 import Settings from '@/lib/settings';
-import { playAudio, AudioName } from '@/lib/audio';
+import { playAudio, type AudioName } from '@/lib/audio';
 
 enum GameStates {
   Paused,

@@ -8,6 +8,7 @@ firebase-debug.log
 dist
 
 # local env files
+.env
 .env.local
 .env.*.local
 
