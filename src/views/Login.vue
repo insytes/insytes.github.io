@@ -65,9 +65,9 @@ async function loginWithPhone() {
     router.push('/');
   } catch (error) {
     if (error instanceof FirebaseError) {
-      switch (error.code) {
+      // switch (error.code) {
 
-      }
+      // }
       $toast.warning('Login failed');
     }
   }
