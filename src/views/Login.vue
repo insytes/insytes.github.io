@@ -1,33 +1,40 @@
 <template>
-  <div class="container">
-    <div class="row">
-      <div class="col-12 text-center">
-          <h2 class="text-light mt-5">Login</h2>
+  <section class="vh-100">
+    <div class="container py-5 h-100">
+      <div class="row d-flex justify-content-center align-items-center h-100">
+        <div class="col-12 col-md-8 col-lg-6 col-xl-5">
+          <div class="card shadow-2-strong" style="border-radius: 1rem;">
+            <div class="card-body pb-5 pl-5 pr-5 text-center">
+              <img width="56" src="/img/icons/icon-152x152.png" class="mb-3" />
+              <form @submit.prevent="login">
+
+                <h3 class="mb-4">Sign in</h3>
+
+                <div class="form-outline mb-4">
+                  <input v-model="email" type="email" id="typeEmailX-2" class="form-control form-control-lg" autofocus />
+                  <label class="form-label" for="typeEmailX-2">Email</label>
+                </div>
+
+                <div data-mdb-input-init class="form-outline mb-4">
+                  <input v-model="password" type="password" id="typePasswordX-2" class="form-control form-control-lg" />
+                  <label class="form-label" for="typePasswordX-2">Password</label>
+                </div>
+
+                <button class="btn btn-primary btn-lg btn-block" type="submit">Login</button>
+
+                <hr class="my-4">
+
+                <button class="btn btn-lg btn-block btn-primary" style="background-color: #49B84F;" type="button"
+                  @click="loginWithPhone">Sign in with phone</button>
+              </form>
+
+              <p class="mt-3">Don't have an account? <router-link to="register">Create one!</router-link></p>
+            </div>
+          </div>
         </div>
-      <div class="col-12">
-        <form class="form-signin mt-4" @submit.prevent="login">
-          <label for="inputEmail" class="sr-only">Email address</label>
-          <input v-model="email" type="email" id="inputEmail" class="form-control mb-2" placeholder="Email address" required
-            autofocus>
-          <label for="inputPassword" class="sr-only">Password</label>
-          <input v-model="password" type="password" id="inputPassword" class="form-control mb-3" placeholder="Password"
-            required>
-          <!-- <div class="checkbox mb-3">
-            <label>
-              <input type="checkbox" value="remember-me"> Remember me
-            </label>
-          </div> -->
-          <router-link to="register">
-          <button class="btn btn-lg btn-light btn-block mb-2" type="button">
-            Register
-          </button>
-         </router-link>
-         <button id="login-with-phone" class="btn btn-lg btn-info btn-block" type="button" @click="loginWithPhone">Use Phone</button>
-         <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
-        </form>
       </div>
     </div>
-  </div>
+  </section>
 </template>
 
 <script setup lang="ts">
@@ -44,22 +51,22 @@ const auth = useFirebaseAuth()!;
 const email = ref('');
 const password = ref('');
 
-let recaptchaVerifier:RecaptchaVerifier;
+let recaptchaVerifier: RecaptchaVerifier;
 onMounted(() => {
-recaptchaVerifier = new RecaptchaVerifier(auth, 'login-with-phone', {
-  'size': 'invisible',
-  'callback': () => {
-    // reCAPTCHA solved, allow signInWithPhoneNumber.
-    // onSignInSubmit();
-    console.log('some callbackl');
-  }
-});
+  recaptchaVerifier = new RecaptchaVerifier(auth, 'typePasswordX-2', {
+    'size': 'invisible',
+    'callback': () => {
+      // reCAPTCHA solved, allow signInWithPhoneNumber.
+      // onSignInSubmit();
+      console.log('some callbackl');
+    }
+  });
 });
 
 async function loginWithPhone() {
   try {
     const phoneNumber = prompt('Enter your phone number')!;
-    const confirmationResult = await signInWithPhoneNumber(auth, '+44'+phoneNumber, recaptchaVerifier);
+    const confirmationResult = await signInWithPhoneNumber(auth, '+44' + phoneNumber, recaptchaVerifier);
     const code = prompt('Enter the code')!;
     await confirmationResult.confirm(code);
     router.push('/');
