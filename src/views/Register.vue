@@ -1,22 +1,29 @@
 <template>
-  <div class="container">
-    <div class="row">
-      <div class="col-12 text-center">
-        <h2 class="text-light mt-5">Register</h2>
-      </div>
-      <div class="col-12 mt-4">
-        <form @submit.prevent="register">
-          <label for="inputEmail" class="sr-only">Email address</label>
-          <input v-model="email" type="email" id="inputEmail" class="form-control mb-2" placeholder="Email address"
-            required autofocus>
-          <label for="inputPassword" class="sr-only">Password</label>
-          <input v-model="password" type="password" id="inputPassword" class="form-control mb-3" placeholder="Password"
-            required>
-            <router-link to="login">
-              Already have an account?
-          </router-link>
-          <button type="submit" class="mt-3 btn btn-primary btn-block">Create Account</button>
-        </form>
+  <div class="container py-5 h-100">
+    <div class="row d-flex justify-content-center align-items-center h-100">
+      <div class="col-12 col-md-8 col-lg-6 col-xl-5">
+        <div class="card shadow" style="border-radius: 1rem;">
+          <div class="card-body pb-5 pl-5 pr-5 text-center">
+            <img width="56" src="/img/icons/icon-152x152.png" class="mb-3" />
+            <h3 class="mb-4">Register</h3>
+
+            <form @submit.prevent="register">
+              <div class="form-outline mb-4">
+                <input v-model="email" type="email" id="typeEmailX-2" class="form-control form-control-lg" autofocus />
+                <label class="form-label" for="typeEmailX-2">Email</label>
+              </div>
+
+              <div data-mdb-input-init class="form-outline mb-4">
+                <input v-model="password" type="password" id="typePasswordX-2" class="form-control form-control-lg" />
+                <label class="form-label" for="typePasswordX-2">Password</label>
+              </div>
+
+              <button class="btn btn-primary btn-lg btn-block" type="submit">Create Account</button>
+            </form>
+
+            <p class="mt-3">Already have an account? <router-link to="login">Login!</router-link></p>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -32,7 +39,7 @@ import { ref, inject } from 'vue';
 import { ToastPluginApi } from 'vue-toast-notification';
 import { useFirebaseAuth } from 'vuefire'
 
-const $toast:ToastPluginApi = inject('$toast')!;
+const $toast: ToastPluginApi = inject('$toast')!;
 const auth = useFirebaseAuth()!;
 
 const email = ref('');
