@@ -8,6 +8,9 @@ import router from './router'
 import ToastPlugin, { ToastProps, useToast } from 'vue-toast-notification';
 import 'vue-toast-notification/dist/theme-bootstrap.css';
 
+import VueTelInput from 'vue-tel-input';
+import 'vue-tel-input/vue-tel-input.css';
+
 import './main.css';
 import Settings from './lib/settings'
 // import * as $api from './lib/api';
@@ -19,7 +22,9 @@ const toastOptions = {
   position: 'top-right'
 }
 app.use(ToastPlugin, toastOptions);
-app.provide('$toast', useToast(toastOptions as ToastProps))
+app.provide('$toast', useToast(toastOptions as ToastProps));
+
+app.use(VueTelInput);
 
 app.use(VueFire, {
   // imported above but could also just be created here
