@@ -52,8 +52,13 @@
 <script setup lang="ts">
 import router from '@/router';
 import { FirebaseError } from 'firebase/app';
-import { signInWithEmailAndPassword, signInWithPhoneNumber, RecaptchaVerifier } from 'firebase/auth';
-import { ref, inject, onMounted, watch, nextTick } from 'vue';
+import {
+  signInWithEmailAndPassword,
+  signInWithPhoneNumber,
+  RecaptchaVerifier,
+  AuthErrorCodes
+} from 'firebase/auth';
+import { ref, inject, watch, nextTick } from 'vue';
 import { ToastPluginApi } from 'vue-toast-notification';
 import { useFirebaseAuth } from 'vuefire';
 
@@ -112,10 +117,10 @@ async function login() {
     if (e instanceof FirebaseError) {
       console.log(e.code);
       switch (e.code) {
-        case 'auth/invalid-credential':
+        case AuthErrorCodes.INVALID_LOGIN_CREDENTIALS:
           $toast.warning('Invalid login');
           break;
-        case 'auth/user-disabled':
+        case AuthErrorCodes.USER_DISABLED:
           $toast.warning('Account disabled');
           break;
       }

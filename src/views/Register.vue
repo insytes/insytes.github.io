@@ -33,7 +33,9 @@
 import router from '@/router';
 import { FirebaseError } from 'firebase/app';
 import {
-  createUserWithEmailAndPassword, sendEmailVerification,
+  AuthErrorCodes,
+  createUserWithEmailAndPassword,
+  sendEmailVerification,
 } from 'firebase/auth';
 import { ref, inject } from 'vue';
 import { ToastPluginApi } from 'vue-toast-notification';
@@ -53,10 +55,10 @@ async function register() {
   } catch (error) {
     if (error instanceof FirebaseError) {
       switch (error.code) {
-        case 'auth/email-already-in-use':
+        case AuthErrorCodes.EMAIL_EXISTS:
           $toast.warning('Account already exists with that email address');
           break;
-        case 'auth/weak-password':
+          case AuthErrorCodes.WEAK_PASSWORD:
           $toast.warning('Weak password. Please use at least 6 characters');
       }
     }
