@@ -52,8 +52,13 @@
 <script setup lang="ts">
 import router from '@/router';
 import { FirebaseError } from 'firebase/app';
-import { signInWithEmailAndPassword, signInWithPhoneNumber, RecaptchaVerifier, AuthErrorCodes, AuthErrorMap } from 'firebase/auth';
-import { ref, inject, onMounted, watch, nextTick } from 'vue';
+import {
+  signInWithEmailAndPassword,
+  signInWithPhoneNumber,
+  RecaptchaVerifier,
+  AuthErrorCodes
+} from 'firebase/auth';
+import { ref, inject, watch, nextTick } from 'vue';
 import { ToastPluginApi } from 'vue-toast-notification';
 import { useFirebaseAuth } from 'vuefire';
 

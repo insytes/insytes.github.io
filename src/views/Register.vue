@@ -33,8 +33,9 @@
 import router from '@/router';
 import { FirebaseError } from 'firebase/app';
 import {
-AuthErrorCodes,
-  createUserWithEmailAndPassword, sendEmailVerification,
+  AuthErrorCodes,
+  createUserWithEmailAndPassword,
+  sendEmailVerification,
 } from 'firebase/auth';
 import { ref, inject } from 'vue';
 import { ToastPluginApi } from 'vue-toast-notification';
